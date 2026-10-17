@@ -45,7 +45,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 pb-24">
 
-    <!-- ==================== FLOATING SUPPORT BUTTONS ==================== -->
+    <!-- ==================== FLOATING CUSTOMER SUPPORT BUTTONS ==================== -->
     <div class="fixed bottom-20 left-4 z-50 flex flex-col gap-2.5">
         <a href="https://t.me/" target="_blank" title="تواصل عبر تليجرام" class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center text-xl shadow-xl transition-all hover:scale-110 border border-blue-400/30">
             <i class="fa-brands fa-telegram"></i>
@@ -55,7 +55,74 @@
         </a>
     </div>
 
-    <!-- ==================== SYSTEM LOGS MODAL (سجل الإشعارات والعمليات) ==================== -->
+    <!-- ==================== KYC POPUP MODAL (نافذة التوثيق المنبثقة) ==================== -->
+    <div id="kycModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="max-w-lg w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeKycModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">توثيق الهوية (KYC)</h2>
+                    <p class="text-xs text-slate-400">أدخل بياناتك ورفع صور الهوية لربطها بحسابك</p>
+                </div>
+            </div>
+
+            <form id="kycForm" onsubmit="handleKYCSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">الدولة / البلد</label>
+                    <select id="kycCountry" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+                        <option value="">-- اختر الدولة --</option>
+                        <option value="سوريا">الجمهورية العربية السورية</option>
+                        <option value="المملكة العربية السعودية">المملكة العربية السعودية</option>
+                        <option value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
+                        <option value="مصر">مصر</option>
+                        <option value="العراق">العراق</option>
+                        <option value="الأردن">الأردن</option>
+                        <option value="لبنان">لبنان</option>
+                        <option value="المغرب">المغرب</option>
+                        <option value="الجزائر">الجزائر</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">الاسم الكامل</label>
+                        <input type="text" id="kycFullName" required placeholder="محمد أحمد" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">نوع الوثيقة</label>
+                        <select id="kycDocType" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+                            <option value="بطاقة الهوية">بطاقة الهوية الوطنية</option>
+                            <option value="جواز السفر">جواز السفر</option>
+                            <option value="رخصة القيادة">رخصة القيادة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">صورة الهوية (الوجه الأمامي)</label>
+                        <input type="file" id="kycFrontFile" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-slate-400 text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">صورة الهوية (الوجه الخلفي / القفا)</label>
+                        <input type="file" id="kycBackFile" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-slate-400 text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
+                    إرسال طلب التوثيق بالكامل للأدمن
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== SYSTEM LOGS MODAL ==================== -->
     <div id="logsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="max-w-xl w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[85vh] overflow-y-auto">
             <button onclick="closeLogsModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
@@ -72,9 +139,7 @@
                 </div>
             </div>
 
-            <div id="logsListContainer" class="space-y-3">
-                <!-- Injected dynamically -->
-            </div>
+            <div id="logsListContainer" class="space-y-3"></div>
         </div>
     </div>
 
@@ -153,13 +218,11 @@
                 <p id="authSubtitle" class="text-xs text-slate-400">سجل حسابك الآن وابدأ الاستثمار والتخزين بأمان تام</p>
             </div>
 
-            <!-- Auth Mode Switch Tabs -->
             <div class="grid grid-cols-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 text-sm font-bold">
                 <button onclick="switchAuthMode('login')" id="authTabLogin" class="py-2.5 rounded-lg bg-amber-500 text-slate-950 shadow-md transition-all">تسجيل الدخول</button>
                 <button onclick="switchAuthMode('register')" id="authTabRegister" class="py-2.5 rounded-lg transition-all text-slate-400 hover:text-white">حساب جديد</button>
             </div>
 
-            <!-- Login Form -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">البريد الإلكتروني</label>
@@ -174,7 +237,6 @@
                 </button>
             </form>
 
-            <!-- Register Form (Includes Confirm Pass & Ref Code) -->
             <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">الاسم الكامل</label>
@@ -219,7 +281,6 @@
                     </div>
                 </div>
 
-                <!-- User Profile & Admin Badge -->
                 <div class="flex items-center gap-3">
                     <div id="adminBadge" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
                         <i class="fa-solid fa-user-gear"></i>
@@ -289,7 +350,6 @@
 
             <!-- SECTION 1: DASHBOARD -->
             <section id="sec-dashboard" class="tab-content space-y-8">
-                <!-- Action Bar (Contains Logs Button) -->
                 <div class="flex justify-between items-center bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
                     <div>
                         <h2 class="text-lg font-bold text-white">لوحة المستثمر الرئيسية</h2>
@@ -348,7 +408,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: ACCOUNT PROFILE (حسابي) -->
+            <!-- SECTION 2: ACCOUNT PROFILE (حسابي) WITH INTEGRATED KYC ACTION -->
             <section id="sec-profile" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-amber-500/30">
                     <div class="flex items-center gap-4 border-b border-slate-800 pb-6">
@@ -367,9 +427,12 @@
                             <div class="text-2xl font-black text-amber-400" id="profileBalance">$0.00</div>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
-                            <span class="text-xs text-slate-400">حالة التوثيق (KYC):</span>
-                            <div class="text-sm font-bold text-white" id="profileKycStatus">غير موثق</div>
+                        <!-- Dynamic KYC Status & Action Button -->
+                        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400">حالة توثيق الحساب (KYC):</span>
+                            <div id="profileKycDisplayContainer">
+                                <!-- Dynamic rendering of status or action button -->
+                            </div>
                         </div>
                     </div>
 
@@ -394,7 +457,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="packagesGrid"></div>
             </section>
 
-            <!-- SECTION 4: DEPOSIT METHODS (Min Deposit $15) -->
+            <!-- SECTION 4: DEPOSIT METHODS -->
             <section id="sec-deposit" class="tab-content hidden space-y-6">
                 <div class="max-w-3xl mx-auto space-y-6">
                     <div class="text-center space-y-2">
@@ -452,7 +515,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 5: WITHDRAWAL MODULE (Min $1) -->
+            <!-- SECTION 5: WITHDRAWAL MODULE -->
             <section id="sec-withdraw" class="tab-content hidden space-y-6">
                 <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-rose-500/20">
                     <div class="text-center space-y-2">
@@ -553,69 +616,9 @@
                 </div>
             </section>
 
-            <!-- SECTION 8: KYC VERIFICATION (Includes Syria) -->
-            <section id="sec-kyc" class="tab-content hidden space-y-6">
-                <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                            <i class="fa-solid fa-id-card text-amber-400"></i> توثيق الهوية (KYC)
-                        </h2>
-                        <p class="text-slate-400 text-sm mt-1">أدخل بياناتك ورفع صورتي الهوية (الوجه الأمامي والخلفي) ليتم مراجعتها وقبولها من قبل الأدمن.</p>
-                    </div>
-
-                    <form id="kycForm" onsubmit="handleKYCSubmit(event)" class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-300 mb-2">الدولة / البلد</label>
-                            <select id="kycCountry" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
-                                <option value="">-- اختر الدولة --</option>
-                                <option value="سوريا">الجمهورية العربية السورية</option>
-                                <option value="المملكة العربية السعودية">المملكة العربية السعودية</option>
-                                <option value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
-                                <option value="مصر">مصر</option>
-                                <option value="العراق">العراق</option>
-                                <option value="الأردن">الأردن</option>
-                                <option value="لبنان">لبنان</option>
-                                <option value="المغرب">المغرب</option>
-                                <option value="الجزائر">الجزائر</option>
-                            </select>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-300 mb-2">الاسم الكامل</label>
-                                <input type="text" id="kycFullName" required placeholder="محمد أحمد" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-300 mb-2">نوع الوثيقة</label>
-                                <select id="kycDocType" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
-                                    <option value="بطاقة الهوية">بطاقة الهوية الوطنية</option>
-                                    <option value="جواز السفر">جواز السفر</option>
-                                    <option value="رخصة القيادة">رخصة القيادة</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-2">صورة الهوية (الوجه الأمامي)</label>
-                                <input type="file" id="kycFrontFile" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-400 text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-2">صورة الهوية (الوجه الخلفي / القفا)</label>
-                                <input type="file" id="kycBackFile" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-400 text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full py-3.5 rounded-xl blue-gradient-btn text-white font-bold text-base shadow-lg shadow-blue-500/20">
-                            إرسال طلب التوثيق بالكامل للأدمن
-                        </button>
-                    </form>
-                </div>
-            </section>
-
         </main>
 
-        <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+        <!-- ==================== BOTTOM NAVIGATION BAR (SIMPLIFIED & CLEAN) ==================== -->
         <nav class="fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-slate-800 py-2.5 px-2">
             <div class="max-w-lg mx-auto flex items-center justify-around text-xs font-semibold">
                 <button onclick="switchTab('admin')" id="nav-btn-admin" class="hidden nav-bottom-btn flex flex-col items-center text-purple-400 gap-1">
@@ -666,7 +669,6 @@
     <script>
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
-        // Packages Data (4% to 18%, 120 Days)
         const packagesData = [
             { id: 1, name: "الباقة الأساسية", price: 15, rate: 4, duration: 120, icon: "fa-seedling" },
             { id: 2, name: "الباقة البرونزية", price: 45, rate: 6, duration: 120, icon: "fa-shield-halved" },
@@ -700,10 +702,9 @@
             renderPackages();
             setInterval(updateTaskTimerUI, 1000);
             checkUrlRefCode();
-            restoreSession(); // Keep user logged in across reloads
+            restoreSession();
         });
 
-        // Restore Session State
         function restoreSession() {
             const savedUser = localStorage.getItem('fcc_user');
             if (savedUser) {
@@ -712,7 +713,6 @@
             }
         }
 
-        // Auto-detect referral code from link
         function checkUrlRefCode() {
             const params = new URLSearchParams(window.location.search);
             const ref = params.get('ref');
@@ -733,6 +733,14 @@
 
         function closeLogsModal() {
             document.getElementById('logsModal').classList.add('hidden');
+        }
+
+        function openKycModal() {
+            document.getElementById('kycModal').classList.remove('hidden');
+        }
+
+        function closeKycModal() {
+            document.getElementById('kycModal').classList.add('hidden');
         }
 
         function switchAuthMode(mode) {
@@ -779,7 +787,6 @@
             state.currentUser = { email, name };
             state.isAdmin = (email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
 
-            // Save to localStorage
             localStorage.setItem('fcc_user', JSON.stringify({ email, name }));
 
             document.getElementById('authScreen').classList.add('hidden');
@@ -997,8 +1004,9 @@
                 status: 'قيد المراجعة'
             });
 
+            closeKycModal();
             updateUI();
-            alert('تم إرسال مستندات التوثيق بالكامل للتدقيق الإداري.');
+            alert('تم إرسال مستندات التوثيق بنجاح إلى الأدمن للتدقيق.');
             if (state.isAdmin) renderAdminDashboard();
         }
 
@@ -1275,10 +1283,18 @@
                 document.getElementById('profileEmail').innerText = state.currentUser.email;
                 document.getElementById('profileBalance').innerText = `$${state.balance.toFixed(2)}`;
                 
-                const profKyc = document.getElementById('profileKycStatus');
-                if (state.kycStatus === 'verified') profKyc.innerText = "حساب موثق بالكامل ✅";
-                else if (state.kycStatus === 'pending') profKyc.innerText = "قيد المراجعة ⏳";
-                else profKyc.innerText = "غير موثق ⚠️";
+                const profKycContainer = document.getElementById('profileKycDisplayContainer');
+                if (state.kycStatus === 'verified') {
+                    profKycContainer.innerHTML = `<div class="text-sm font-bold text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> تم التوثيق بنجاح ✅</div>`;
+                } else if (state.kycStatus === 'pending') {
+                    profKycContainer.innerHTML = `<div class="text-sm font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> قيد المراجعة والتدقيق ⏳</div>`;
+                } else {
+                    profKycContainer.innerHTML = `
+                        <button onclick="openKycModal()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-id-card"></i> توثيق الحساب الآن 🆔
+                        </button>
+                    `;
+                }
 
                 const profPkgList = document.getElementById('profilePackagesList');
                 if (state.activeInvestments.length === 0) {
