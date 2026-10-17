@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCC Platform | منصة الاستثمار والتخزين الرقمي</title>
+    <title>FCC Platform | منصة الاستثمار والتخزين الرقمي الآمن</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons CDN -->
@@ -35,9 +35,81 @@
         .gold-gradient-btn:hover { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
         .blue-gradient-btn { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
         .hero-glow { background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15) 0%, transparent 70%); }
+        .geometric-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 pb-20">
+
+    <!-- ==================== WELCOME & TRUST ANNOUNCEMENT MODAL ==================== -->
+    <div id="welcomeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="max-w-xl w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeWelcomeModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center space-y-3">
+                <div class="w-16 h-16 mx-auto rounded-2xl gold-gradient-btn flex items-center justify-center text-slate-950 text-3xl font-black shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-2xl font-black text-white">مرحباً بك في منصة FCC الاستثمارية الرسمية</h2>
+                <span class="inline-block px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold border border-amber-500/20">
+                    <i class="fa-solid fa-lock ml-1"></i> أمان عالي وتشفير كامل للأصول الرقمية
+                </span>
+            </div>
+
+            <!-- Trust Announcement Text -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-slate-300 text-xs sm:text-sm leading-relaxed space-y-2 text-justify">
+                <p>
+                    تعتبر <strong>منصة FCC</strong> الخيار الأول للتخزين والاستثمار الرقمي الذكي. نحن نضمن لك بيئة عمل آمنة ومستقرة تماماً بفضل عقود الاستثمار الذكية ونظام الحماية المتقدم. 
+                </p>
+                <p class="text-amber-300 font-semibold">
+                    <i class="fa-solid fa-circle-check ml-1 text-amber-400"></i> جميع العوائد اليومية يتم احتسابها وتوزيعها تلقائياً كل 24 ساعة بمصداقية وشفافية تامة عبر شبكات TRC20, BEP20, و ERC20 مع إمكانية سحب أرباحك في أي وقت.
+                </p>
+            </div>
+
+            <!-- Quick Packages Display -->
+            <div class="space-y-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-amber-400"></i> الباقات الاستثمارية المتوفرة حالياً (120 يوماً):
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">الباقة الأساسية</div>
+                        <div class="text-slate-300 mt-1">$15 | ربح 4%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">الباقة البرونزية</div>
+                        <div class="text-slate-300 mt-1">$45 | ربح 6%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">الباقة الفضية</div>
+                        <div class="text-slate-300 mt-1">$90 | ربح 9%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">الباقة الذهبية</div>
+                        <div class="text-slate-300 mt-1">$150 | ربح 12%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">الباقة الماسية</div>
+                        <div class="text-slate-300 mt-1">$220 | ربح 15%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                        <div class="font-bold text-amber-400">باقة VIP</div>
+                        <div class="text-slate-300 mt-1">$300 | ربح 18%</div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeWelcomeModal()" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
+                بدء الاستثمار الآن
+            </button>
+        </div>
+    </div>
 
     <!-- ==================== AUTHENTICATION SCREEN ==================== -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 hero-glow bg-[#0b0f19]">
@@ -47,7 +119,7 @@
                     FCC
                 </div>
                 <h1 class="text-2xl font-extrabold text-white">منصة FCC الاستثمارية</h1>
-                <p id="authSubtitle" class="text-xs text-slate-400">سجل حسابك الآن وابدأ الاستثمار بأمان تام</p>
+                <p id="authSubtitle" class="text-xs text-slate-400">سجل حسابك الآن وابدأ الاستثمار والتخزين بأمان تام</p>
             </div>
 
             <!-- Auth Mode Switch Tabs -->
@@ -137,42 +209,15 @@
         <!-- Main Dynamic Content Wrapper -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
 
-            <!-- Navigation Tabs -->
-            <div class="flex overflow-x-auto gap-2 mb-8 pb-2 border-b border-slate-800 text-sm font-semibold">
-                <!-- Admin Only Tab Button -->
-                <button onclick="switchTab('admin')" id="tab-admin" class="nav-btn hidden px-5 py-3 rounded-xl bg-purple-600 text-white font-bold flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-sliders"></i> لوحة الأدمن ⚙️
-                </button>
-
-                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn px-5 py-3 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-chart-pie"></i> لوحة التحكم
-                </button>
-                <button onclick="switchTab('packages')" id="tab-packages" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-box-archive"></i> باقات الاستثمار
-                </button>
-                <button onclick="switchTab('deposit')" id="tab-deposit" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-wallet text-emerald-400"></i> شحن الرصيد
-                </button>
-                <button onclick="switchTab('task')" id="tab-task" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-bolt text-amber-400"></i> المهمة اليومية
-                </button>
-                <button onclick="switchTab('kyc')" id="tab-kyc" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-id-card"></i> توثيق الهوية (KYC)
-                </button>
-                <button onclick="switchTab('support')" id="tab-support" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all shrink-0">
-                    <i class="fa-solid fa-headset text-blue-400"></i> الدعم الفني
-                </button>
-            </div>
-
             <!-- ==================== SECTION: ADMIN DASHBOARD (ADMIN ONLY) ==================== -->
             <section id="sec-admin" class="tab-content hidden space-y-8">
                 <div class="glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                         <div>
                             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                                <i class="fa-solid fa-user-shield text-purple-400"></i> لوحة إدارة المنصة (Admin Control Center)
+                                <i class="fa-solid fa-user-shield text-purple-400"></i> لوحة إدارة المنصة (Admin)
                             </h2>
-                            <p class="text-xs text-purple-300 mt-1">مرحباً بك يا مدير المنصة (<span class="font-mono">nnnnaaatttnanooo@gmail.com</span>). هنا تستقبل وتوافق على طلبات المستخدمين.</p>
+                            <p class="text-xs text-purple-300 mt-1">حساب الأدمن الرئيسي (<span class="font-mono">nnnnaaatttnanooo@gmail.com</span>)</p>
                         </div>
                     </div>
 
@@ -181,9 +226,17 @@
                         <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
                             <i class="fa-solid fa-clock-rotate-left"></i> طلبات شحن الرصيد المعلقة
                         </h3>
-                        <div id="adminDepositRequests" class="space-y-3">
-                            <!-- Injected via JS -->
-                        </div>
+                        <div id="adminDepositRequests" class="space-y-3"></div>
+                    </div>
+
+                    <hr class="border-slate-800">
+
+                    <!-- Pending Withdrawals Queue -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-hand-holding-dollar"></i> طلبات السحب المعلقة
+                        </h3>
+                        <div id="adminWithdrawRequests" class="space-y-3"></div>
                     </div>
 
                     <hr class="border-slate-800">
@@ -193,9 +246,7 @@
                         <h3 class="text-lg font-bold text-blue-400 flex items-center gap-2">
                             <i class="fa-solid fa-id-card"></i> طلبات توثيق الهوية (KYC)
                         </h3>
-                        <div id="adminKYCRequests" class="space-y-3">
-                            <!-- Injected via JS -->
-                        </div>
+                        <div id="adminKYCRequests" class="space-y-3"></div>
                     </div>
                 </div>
             </section>
@@ -209,7 +260,7 @@
                             <i class="fa-solid fa-wallet text-amber-400 text-xl"></i>
                         </div>
                         <div class="text-3xl font-extrabold text-white" id="dashBalance">$0.00</div>
-                        <p class="text-xs text-slate-400 mt-2">جاهز للاستثمار والشراء</p>
+                        <p class="text-xs text-slate-400 mt-2">جاهز للاستثمار والشراء والسحب</p>
                     </div>
 
                     <div class="glass-panel p-6 rounded-2xl border-r-4 border-emerald-500">
@@ -218,7 +269,7 @@
                             <i class="fa-solid fa-chart-line text-emerald-400 text-xl"></i>
                         </div>
                         <div class="text-3xl font-extrabold text-emerald-400" id="dashEarnings">$0.00</div>
-                        <p class="text-xs text-slate-400 mt-2">عائدات الاستثمار والمهام</p>
+                        <p class="text-xs text-slate-400 mt-2">عائدات الاستثمار والمهام والفريق</p>
                     </div>
 
                     <div class="glass-panel p-6 rounded-2xl border-r-4 border-blue-500">
@@ -227,7 +278,7 @@
                             <i class="fa-solid fa-layer-group text-blue-400 text-xl"></i>
                         </div>
                         <div class="text-3xl font-extrabold text-white" id="dashActiveCount">0</div>
-                        <p class="text-xs text-slate-400 mt-2">مدة كل باقة: 30 يوماً</p>
+                        <p class="text-xs text-slate-400 mt-2">مدة كل باقة: 120 يوماً</p>
                     </div>
 
                     <div class="glass-panel p-6 rounded-2xl border-r-4 border-purple-500">
@@ -242,7 +293,7 @@
 
                 <div class="glass-panel p-6 rounded-2xl">
                     <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-blue-400"></i> باقاتي الإستثمارية النشطة
+                        <i class="fa-solid fa-list-check text-blue-400"></i> باقاتي الإستثمارية النشطة (120 يوماً)
                     </h3>
                     <div id="activePackagesList" class="space-y-3">
                         <div class="text-center py-10 text-slate-500 text-sm">لا توجد باقات نشطة حالياً. شحن الرصيد أولاً ثم اختر باقتك المفضلة للبدء.</div>
@@ -250,53 +301,119 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: INVESTMENT PACKAGES -->
+            <!-- SECTION 2: INVESTMENT PACKAGES (4% to 18%, 120 Days) -->
             <section id="sec-packages" class="tab-content hidden space-y-6">
                 <div class="text-center max-w-2xl mx-auto space-y-2">
                     <h2 class="text-3xl font-extrabold text-white">باقات الاستثمار والتخزين الرقمي</h2>
-                    <p class="text-slate-400 text-sm">باقات مصممة بأسعار تبدأ من 15$ وحتى 300$ بنسبة ربح 2% إلى 15% لمدة 30 يوماً.</p>
+                    <p class="text-slate-400 text-sm">باقات تبدأ من 15$ بنسبة ربح يومية ممتازة من 4% إلى 18% ولمدة استثمار تبلغ 120 يوماً.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="packagesGrid">
-                    <!-- Injected via JS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="packagesGrid"></div>
+            </section>
+
+            <!-- SECTION 3: 3 DEPOSIT METHODS (TRC20, BEP20, ERC20) -->
+            <section id="sec-deposit" class="tab-content hidden space-y-6">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="text-center space-y-2">
+                        <h2 class="text-2xl font-bold text-white">شحن رصيد المحفظة</h2>
+                        <p class="text-slate-400 text-sm">اختر إحدى شبكات العملات الرقمية المعتمدة أدناه وأرسل طلب الشحن للأدمن للموافقة:</p>
+                    </div>
+
+                    <!-- Deposit Methods Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Method 1: TRC20 -->
+                        <div onclick="selectDepositMethod('trc20')" id="method-trc20" class="geometric-card p-5 rounded-2xl cursor-pointer hover:border-amber-400 transition-all border-amber-500">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-extrabold text-amber-400 text-sm">USDT (TRC20)</span>
+                                <i class="fa-solid fa-network-wired text-amber-400"></i>
+                            </div>
+                            <p class="text-[11px] text-slate-400">شبكة ترون الرقمية السريعة والمنخفضة الرسوم</p>
+                        </div>
+
+                        <!-- Method 2: BEP20 -->
+                        <div onclick="selectDepositMethod('bep20')" id="method-bep20" class="geometric-card p-5 rounded-2xl cursor-pointer hover:border-amber-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-extrabold text-blue-400 text-sm">USDT (BEP20)</span>
+                                <i class="fa-brands fa-ethereum text-blue-400"></i>
+                            </div>
+                            <p class="text-[11px] text-slate-400">شبكة بينانس الذكية (BNB Smart Chain)</p>
+                        </div>
+
+                        <!-- Method 3: ERC20 -->
+                        <div onclick="selectDepositMethod('erc20')" id="method-erc20" class="geometric-card p-5 rounded-2xl cursor-pointer hover:border-amber-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-extrabold text-indigo-400 text-sm">USDT (ERC20)</span>
+                                <i class="fa-solid fa-cube text-indigo-400"></i>
+                            </div>
+                            <p class="text-[11px] text-slate-400">شبكة إيثريوم الرقمية الآمنة والموثوقة</p>
+                        </div>
+                    </div>
+
+                    <!-- Selected Deposit Address Panel -->
+                    <div class="glass-panel p-6 rounded-3xl space-y-4 border border-slate-800">
+                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                            <span class="text-xs text-slate-400 block" id="depositMethodTitle">عنوان المحفظة المعتمد لشحن USDT (TRC20):</span>
+                            <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-amber-400 text-xs sm:text-sm overflow-x-auto">
+                                <span id="depositWalletAddress">TXYZ987654321FCC...DepositWalletTRC20</span>
+                                <button onclick="copyWalletAddress()" class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all shrink-0">
+                                    <i class="fa-solid fa-copy ml-1"></i> نسخ
+                                </button>
+                            </div>
+                        </div>
+
+                        <form onsubmit="handleDepositSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">المبلغ المراد شحنه ($ USD)</label>
+                                <input type="number" id="depositAmount" min="15" required placeholder="مثال: 100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">كود المعاملة (TxID / Hash)</label>
+                                <input type="text" id="depositTx" required placeholder="أدخل كود المعاملة هنا" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            </div>
+                            <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
+                                إرسال طلب الشحن للأدمن للموافقة
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </section>
 
-            <!-- SECTION 3: REAL DEPOSIT -->
-            <section id="sec-deposit" class="tab-content hidden space-y-6">
-                <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-emerald-500/20">
+            <!-- SECTION 4: WITHDRAWAL MODULE -->
+            <section id="sec-withdraw" class="tab-content hidden space-y-6">
+                <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-rose-500/20">
                     <div class="text-center space-y-2">
-                        <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl">
-                            <i class="fa-solid fa-wallet"></i>
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-2xl">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
                         </div>
-                        <h2 class="text-2xl font-bold text-white">شحن رصيد المحفظة</h2>
-                        <p class="text-slate-400 text-sm">أرسل المبلغ للعنوان أدناه وأدخل كود المعاملة ليرسل الطلب للأدمن فوراً:</p>
+                        <h2 class="text-2xl font-bold text-white">سحب الأرباح والرصيد</h2>
+                        <p class="text-slate-400 text-sm">حدد المبلغ المراد سحبه وأدخل عنوان محفظتك لإرسال الطلب للأدمن:</p>
                     </div>
 
-                    <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="flex justify-between text-xs text-slate-400">
-                            <span>عنوان USDT (TRC20):</span>
-                            <span class="font-mono text-amber-400">TXYZ...FCC...DepositWallet98</span>
-                        </div>
-                    </div>
-
-                    <form onsubmit="handleDepositSubmit(event)" class="space-y-4">
+                    <form onsubmit="handleWithdrawSubmit(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">المبلغ المراد شحنه ($ USD)</label>
-                            <input type="number" id="depositAmount" min="15" required placeholder="مثال: 100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">المبلغ المراد سحبه ($ USD)</label>
+                            <input type="number" id="withdrawAmount" min="10" required placeholder="الحد الأدنى للسحب $10" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">كود المعاملة (TxID / Hash)</label>
-                            <input type="text" id="depositTx" required placeholder="أدخل رمز التحويل هنا" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">شبكة وطريقة السحب</label>
+                            <select id="withdrawMethod" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                                <option value="USDT (TRC20)">USDT (TRC20)</option>
+                                <option value="USDT (BEP20)">USDT (BEP20)</option>
+                                <option value="USDT (ERC20)">USDT (ERC20)</option>
+                            </select>
                         </div>
-                        <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
-                            إرسال طلب الشحن للأدمن للموافقة
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">عنوان المحفظة لاستلام المبلغ</label>
+                            <input type="text" id="withdrawAddress" required placeholder="أدخل عنوان محفظتك هنا" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-extrabold text-sm shadow-lg shadow-rose-500/20">
+                            تأكيد وإرسال طلب السحب للأدمن
                         </button>
                     </form>
                 </div>
             </section>
 
-            <!-- SECTION 4: DAILY TASK HANDLER -->
+            <!-- SECTION 5: DAILY TASK HANDLER -->
             <section id="sec-task" class="tab-content hidden space-y-6">
                 <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl text-center space-y-6 border border-amber-500/20">
                     <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-3xl">
@@ -318,14 +435,61 @@
                 </div>
             </section>
 
-            <!-- SECTION 5: KYC VERIFICATION -->
+            <!-- SECTION 6: TEAM & REFERRAL PROGRAM (3% Fixed Commission) -->
+            <section id="sec-team" class="tab-content hidden space-y-6">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="text-center space-y-2">
+                        <h2 class="text-2xl font-bold text-white">برنامج الفريق والإحالات (Team)</h2>
+                        <p class="text-slate-400 text-sm">دع أصدقائك للاستثمار واحصل على نسبة ربح ثابتة <strong class="text-amber-400">3%</strong> من إجمالي شحنات الفريق.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Referral Code Box -->
+                        <div class="glass-panel p-6 rounded-2xl space-y-2 text-center border border-amber-500/30">
+                            <span class="text-xs text-slate-400">كود الدعوة الخاص بك:</span>
+                            <div class="text-2xl font-mono font-extrabold text-amber-400" id="refCodeDisplay">FCC-8899</div>
+                            <button onclick="copyRefCode()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl text-xs font-bold">
+                                <i class="fa-solid fa-copy ml-1"></i> نسخ الكود
+                            </button>
+                        </div>
+
+                        <!-- Referral Link Box -->
+                        <div class="glass-panel p-6 rounded-2xl space-y-2 text-center border border-blue-500/30">
+                            <span class="text-xs text-slate-400">رابط الدعوة المباشر:</span>
+                            <div class="text-xs font-mono text-slate-300 truncate" id="refLinkDisplay">https://fcc-platform.com/reg?ref=FCC-8899</div>
+                            <button onclick="copyRefLink()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded-xl text-xs font-bold">
+                                <i class="fa-solid fa-link ml-1"></i> نسخ الرابط
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team Stats -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-users text-amber-400"></i> إحصائيات الفريق
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                                <span class="text-xs text-slate-400">أعضاء الفريق النشطين</span>
+                                <div class="text-2xl font-extrabold text-white mt-1">3</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                                <span class="text-xs text-slate-400">أرباح عمولة الفريق (3%)</span>
+                                <div class="text-2xl font-extrabold text-emerald-400 mt-1">$13.50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: KYC VERIFICATION (Front & Back Photos) -->
             <section id="sec-kyc" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6">
                     <div>
                         <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                             <i class="fa-solid fa-id-card text-amber-400"></i> توثيق الهوية (KYC)
                         </h2>
-                        <p class="text-slate-400 text-sm mt-1">أدخل بياناتك ووثيقتك ليتم مراجعتها وقبولها من قبل الأدمن مباشرة.</p>
+                        <p class="text-slate-400 text-sm mt-1">أدخل بياناتك ورفع صورتي الهوية (الوجه الأمامي والخلفي) ليتم مراجعتها وقبولها من قبل الأدمن.</p>
                     </div>
 
                     <form id="kycForm" onsubmit="handleKYCSubmit(event)" class="space-y-5">
@@ -360,14 +524,26 @@
                             </div>
                         </div>
 
+                        <!-- Front & Back Image Uploads -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">صورة الهوية (الوجه الأمامي)</label>
+                                <input type="file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-400 text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">صورة الهوية (الوجه الخلفي / القفا)</label>
+                                <input type="file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-400 text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950">
+                            </div>
+                        </div>
+
                         <button type="submit" class="w-full py-3.5 rounded-xl blue-gradient-btn text-white font-bold text-base shadow-lg shadow-blue-500/20">
-                            إرسال طلب التوثيق للأدمن
+                            إرسال طلب التوثيق بالكامل للأدمن
                         </button>
                     </form>
                 </div>
             </section>
 
-            <!-- SECTION 6: SUPPORT -->
+            <!-- SECTION 8: SUPPORT -->
             <section id="sec-support" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6 text-center">
                     <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-3xl">
@@ -399,10 +575,46 @@
 
         </main>
 
-        <!-- Footer -->
-        <footer class="glass-panel border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-            <p>© 2026 FCC Platform. جميع الحقوق محفوظة.</p>
-        </footer>
+        <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+        <nav class="fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-slate-800 py-2.5 px-2">
+            <div class="max-w-md mx-auto flex items-center justify-around text-xs font-semibold">
+                <!-- Admin Tab (Conditional) -->
+                <button onclick="switchTab('admin')" id="nav-btn-admin" class="hidden nav-bottom-btn flex flex-col items-center text-purple-400 gap-1">
+                    <i class="fa-solid fa-sliders text-lg"></i>
+                    <span>الأدمن</span>
+                </button>
+
+                <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="nav-bottom-btn flex flex-col items-center text-amber-400 gap-1">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                    <span>الرئيسية</span>
+                </button>
+
+                <button onclick="switchTab('packages')" id="nav-btn-packages" class="nav-bottom-btn flex flex-col items-center text-slate-400 hover:text-white gap-1">
+                    <i class="fa-solid fa-box-archive text-lg"></i>
+                    <span>الباقات</span>
+                </button>
+
+                <button onclick="switchTab('deposit')" id="nav-btn-deposit" class="nav-bottom-btn flex flex-col items-center text-slate-400 hover:text-white gap-1">
+                    <i class="fa-solid fa-wallet text-lg text-emerald-400"></i>
+                    <span>إيداع</span>
+                </button>
+
+                <button onclick="switchTab('withdraw')" id="nav-btn-withdraw" class="nav-bottom-btn flex flex-col items-center text-slate-400 hover:text-white gap-1">
+                    <i class="fa-solid fa-arrow-up-from-bracket text-lg text-rose-400"></i>
+                    <span>سحب</span>
+                </button>
+
+                <button onclick="switchTab('team')" id="nav-btn-team" class="nav-bottom-btn flex flex-col items-center text-slate-400 hover:text-white gap-1">
+                    <i class="fa-solid fa-users text-lg"></i>
+                    <span>الفريق</span>
+                </button>
+
+                <button onclick="switchTab('kyc')" id="nav-btn-kyc" class="nav-bottom-btn flex flex-col items-center text-slate-400 hover:text-white gap-1">
+                    <i class="fa-solid fa-id-card text-lg"></i>
+                    <span>توثيق</span>
+                </button>
+            </div>
+        </nav>
 
     </div>
 
@@ -410,16 +622,16 @@
     <script>
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
+        // Packages Data (4% to 18%, 120 Days)
         const packagesData = [
-            { id: 1, name: "الباقة الأساسية", price: 15, rate: 2, duration: 30, icon: "fa-seedling" },
-            { id: 2, name: "الباقة البرونزية", price: 45, rate: 4, duration: 30, icon: "fa-shield-halved" },
-            { id: 3, name: "الباقة الفضية", price: 90, rate: 7, duration: 30, icon: "fa-coins" },
-            { id: 4, name: "الباقة الذهبية", price: 150, rate: 10, duration: 30, icon: "fa-gem" },
-            { id: 5, name: "الباقة الماسية", price: 220, rate: 12.5, duration: 30, icon: "fa-crown" },
-            { id: 6, name: "باقة النخبة VIP", price: 300, rate: 15, duration: 30, icon: "fa-bolt" }
+            { id: 1, name: "الباقة الأساسية", price: 15, rate: 4, duration: 120, icon: "fa-seedling" },
+            { id: 2, name: "الباقة البرونزية", price: 45, rate: 6, duration: 120, icon: "fa-shield-halved" },
+            { id: 3, name: "الباقة الفضية", price: 90, rate: 9, duration: 120, icon: "fa-coins" },
+            { id: 4, name: "الباقة الذهبية", price: 150, rate: 12, duration: 120, icon: "fa-gem" },
+            { id: 5, name: "الباقة الماسية", price: 220, rate: 15, duration: 120, icon: "fa-crown" },
+            { id: 6, name: "باقة النخبة VIP", price: 300, rate: 18, duration: 120, icon: "fa-bolt" }
         ];
 
-        // System Data
         let state = {
             currentUser: null,
             isAdmin: false,
@@ -430,14 +642,21 @@
             kycStatus: 'unverified'
         };
 
-        // Shared Queues for Admin Control
+        // Queues for Admin Panel
         let pendingDeposits = [];
+        let pendingWithdrawals = [];
         let pendingKYCs = [];
+
+        let currentSelectedDepositMethod = 'trc20';
 
         document.addEventListener('DOMContentLoaded', () => {
             renderPackages();
             setInterval(updateTaskTimerUI, 1000);
         });
+
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+        }
 
         function switchAuthMode(mode) {
             const loginForm = document.getElementById('loginForm');
@@ -479,9 +698,12 @@
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('userNameDisplay').innerText = name;
 
+            // Show Trust Popup on Login/Register
+            document.getElementById('welcomeModal').classList.remove('hidden');
+
             if (state.isAdmin) {
                 document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('tab-admin').classList.remove('hidden');
+                document.getElementById('nav-btn-admin').classList.remove('hidden');
                 renderAdminDashboard();
                 switchTab('admin');
             } else {
@@ -498,18 +720,19 @@
             document.getElementById('authScreen').classList.remove('hidden');
         }
 
+        // Bottom Nav Switcher
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
-                btn.classList.add('bg-slate-800', 'text-slate-400');
+            document.querySelectorAll('.nav-bottom-btn').forEach(btn => {
+                btn.classList.remove('text-amber-400');
+                btn.classList.add('text-slate-400');
             });
 
             document.getElementById(`sec-${tabId}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-${tabId}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
-                activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+            const activeNav = document.getElementById(`nav-btn-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-amber-400');
             }
         }
 
@@ -539,7 +762,7 @@
                                     <span class="font-bold text-emerald-400">+$${dailyProfit}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-slate-400">إجمالي الأرباح:</span>
+                                    <span class="text-slate-400">إجمالي أرباح الـ 120 يوم:</span>
                                     <span class="font-bold text-emerald-400">+$${totalProfit}</span>
                                 </div>
                             </div>
@@ -550,6 +773,43 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // Deposit Method Selector
+        function selectDepositMethod(method) {
+            currentSelectedDepositMethod = method;
+            document.querySelectorAll('.geometric-card').forEach(c => c.classList.remove('border-amber-500'));
+            document.getElementById(`method-${method}`).classList.add('border-amber-500');
+
+            const title = document.getElementById('depositMethodTitle');
+            const wallet = document.getElementById('depositWalletAddress');
+
+            if (method === 'trc20') {
+                title.innerText = "عنوان المحفظة المعتمد لشحن USDT (TRC20):";
+                wallet.innerText = "TXYZ987654321FCC...DepositWalletTRC20";
+            } else if (method === 'bep20') {
+                title.innerText = "عنوان المحفظة المعتمد لشحن USDT (BEP20):";
+                wallet.innerText = "0xFCC987654321BNB...DepositWalletBEP20";
+            } else {
+                title.innerText = "عنوان المحفظة المعتمد لشحن USDT (ERC20):";
+                wallet.innerText = "0xERC20FCC...SecureEthereumWallet99";
+            }
+        }
+
+        function copyWalletAddress() {
+            const walletText = document.getElementById('depositWalletAddress').innerText;
+            navigator.clipboard.writeText(walletText);
+            alert("تم نسخ العنوان بنجاح!");
+        }
+
+        function copyRefCode() {
+            navigator.clipboard.writeText("FCC-8899");
+            alert("تم نسخ كود الدعوة بنجاح!");
+        }
+
+        function copyRefLink() {
+            navigator.clipboard.writeText("https://fcc-platform.com/reg?ref=FCC-8899");
+            alert("تم نسخ رابط الدعوة بنجاح!");
         }
 
         // Deposit Request Handling
@@ -563,14 +823,43 @@
                 userEmail: state.currentUser.email,
                 userName: state.currentUser.name,
                 amount: amount,
-                tx: tx,
-                date: new Date().toLocaleTimeString()
+                method: currentSelectedDepositMethod.toUpperCase(),
+                tx: tx
             });
 
             document.getElementById('depositAmount').value = '';
             document.getElementById('depositTx').value = '';
 
             alert('تم إرسال طلب الشحن إلى لوحة تحكم الأدمن بنجاح. سيتم إضافة الرصيد لحسابك فور الموافقة.');
+            if (state.isAdmin) renderAdminDashboard();
+            switchTab('dashboard');
+        }
+
+        // Withdraw Request Handling
+        function handleWithdrawSubmit(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const method = document.getElementById('withdrawMethod').value;
+            const address = document.getElementById('withdrawAddress').value.trim();
+
+            if (amount > state.balance) {
+                alert(`رصيدك الحالي ($${state.balance.toFixed(2)}) غير كافٍ لإتمام طلب السحب.`);
+                return;
+            }
+
+            pendingWithdrawals.push({
+                id: Date.now(),
+                userEmail: state.currentUser.email,
+                userName: state.currentUser.name,
+                amount: amount,
+                method: method,
+                address: address
+            });
+
+            document.getElementById('withdrawAmount').value = '';
+            document.getElementById('withdrawAddress').value = '';
+
+            alert('تم إرسال طلب السحب إلى الأدمن بنجاح. سيتم تحويل المبلغ لحسابك فور المعالجة.');
             if (state.isAdmin) renderAdminDashboard();
             switchTab('dashboard');
         }
@@ -592,23 +881,24 @@
 
             state.kycStatus = 'pending';
             updateUI();
-            alert('تم إرسال مستندات التوثيق إلى لوحة تحكم الأدمن للمراجعة.');
+            alert('تم إرسال مستندات التوثيق الكاملة (الوجه والقفا) إلى الأدمن للمراجعة.');
             if (state.isAdmin) renderAdminDashboard();
         }
 
-        // Admin Actions
+        // Admin Dashboard Render
         function renderAdminDashboard() {
             const depList = document.getElementById('adminDepositRequests');
+            const withList = document.getElementById('adminWithdrawRequests');
             const kycList = document.getElementById('adminKYCRequests');
 
             if (pendingDeposits.length === 0) {
-                depList.innerHTML = `<div class="text-slate-500 text-xs py-4 text-center">لا توجد طلبات إيداع معلقة حالياً.</div>`;
+                depList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات إيداع معلقة حالياً.</div>`;
             } else {
                 depList.innerHTML = pendingDeposits.map(d => `
                     <div class="flex flex-wrap items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 gap-3">
                         <div>
                             <div class="text-sm font-bold text-white">${d.userName} (${d.userEmail})</div>
-                            <div class="text-xs text-slate-400">المبلغ المطلوبة: <span class="text-emerald-400 font-bold">$${d.amount}</span> | TxID: <span class="font-mono text-amber-400">${d.tx}</span></div>
+                            <div class="text-xs text-slate-400">المبلغ: <span class="text-emerald-400 font-bold">$${d.amount}</span> | الشبكة: ${d.method} | TxID: <span class="font-mono text-amber-400">${d.tx}</span></div>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="approveDeposit(${d.id})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl">قبول وشحن</button>
@@ -618,14 +908,31 @@
                 `).join('');
             }
 
+            if (pendingWithdrawals.length === 0) {
+                withList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات سحب معلقة حالياً.</div>`;
+            } else {
+                withList.innerHTML = pendingWithdrawals.map(w => `
+                    <div class="flex flex-wrap items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 gap-3">
+                        <div>
+                            <div class="text-sm font-bold text-white">${w.userName} (${w.userEmail})</div>
+                            <div class="text-xs text-slate-400">المبلغ المطلوب سحبه: <span class="text-rose-400 font-bold">$${w.amount}</span> | الطريقة: ${w.method} | العنوان: <span class="font-mono text-amber-400">${w.address}</span></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="approveWithdrawal(${w.id})" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">موافقة وصرف</button>
+                            <button onclick="rejectWithdrawal(${w.id})" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded-xl">إلغاء</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
             if (pendingKYCs.length === 0) {
-                kycList.innerHTML = `<div class="text-slate-500 text-xs py-4 text-center">لا توجد طلبات توثيق معلقة حالياً.</div>`;
+                kycList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات توثيق معلقة حالياً.</div>`;
             } else {
                 kycList.innerHTML = pendingKYCs.map(k => `
                     <div class="flex flex-wrap items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 gap-3">
                         <div>
                             <div class="text-sm font-bold text-white">${k.fullName} (${k.userEmail})</div>
-                            <div class="text-xs text-slate-400">الدولة: ${k.country} | نوع الوثيقة: ${k.docType}</div>
+                            <div class="text-xs text-slate-400">الدولة: ${k.country} | نوع الوثيقة: ${k.docType} (الوجه والقفا مرفقين)</div>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="approveKYC(${k.id})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl">قبول التوثيق</button>
@@ -643,12 +950,28 @@
                 pendingDeposits = pendingDeposits.filter(d => d.id !== id);
                 renderAdminDashboard();
                 updateUI();
-                alert(`تم قبول الشحن وإضافة $${req.amount} للمستثمر بنجاح.`);
+                alert(`تم قبول الشحن وإضافة $${req.amount} لحساب المستثمر بنجاح.`);
             }
         }
 
         function rejectDeposit(id) {
             pendingDeposits = pendingDeposits.filter(d => d.id !== id);
+            renderAdminDashboard();
+        }
+
+        function approveWithdrawal(id) {
+            const req = pendingWithdrawals.find(w => w.id === id);
+            if (req) {
+                state.balance -= req.amount;
+                pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
+                renderAdminDashboard();
+                updateUI();
+                alert(`تم تأكيد سحب مبلغ $${req.amount} وإرساله بنجاح.`);
+            }
+        }
+
+        function rejectWithdrawal(id) {
+            pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
             renderAdminDashboard();
         }
 
@@ -683,7 +1006,7 @@
             });
 
             updateUI();
-            alert(`تم الاشتراك بنجاح في ${pkg.name}`);
+            alert(`تم الاشتراك بنجاح في ${pkg.name} لمدة 120 يوماً.`);
             switchTab('dashboard');
         }
 
@@ -709,7 +1032,7 @@
             state.lastTaskTime = now;
 
             updateUI();
-            alert(`تم تحصيل أرباح اليوم بخصم ($${profit.toFixed(2)}) وإضافتها لرصيدك.`);
+            alert(`تم تحصيل أرباح اليوم بخصم ($${profit.toFixed(2)}) وإضافتها لرصيدك المتاح.`);
         }
 
         function updateTaskTimerUI() {
@@ -752,7 +1075,7 @@
             document.getElementById('dashEarnings').innerText = `$${state.earnings.toFixed(2)}`;
             document.getElementById('dashActiveCount').innerText = state.activeInvestments.length;
 
-            // KYC Badge UI
+            // KYC Badge
             const kycBadge = document.getElementById('kycNavBadge');
             const kycText = document.getElementById('kycBadgeText');
             if (state.kycStatus === 'verified') {
@@ -782,7 +1105,7 @@
                             </div>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            نشطة (30 يوم)
+                            نشطة (120 يوم)
                         </span>
                     </div>
                 `).join('');
