@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCC Platform | منصة الاستثمار والتخزين الرقمي</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fccGold: '#f59e0b',
+                        fccDark: '#0f172a',
+                        fccCard: '#1e293b',
+                        fccAccent: '#3b82f6'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f8fafc; }
+        .glass-panel { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .gold-gradient-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .gold-gradient-btn:hover { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+        .blue-gradient-btn { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-12 h-12 rounded-xl gold-gradient-btn flex items-center justify-center font-black text-slate-950 text-2xl shadow-lg shadow-amber-500/20">
+                    FCC
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide text-white">FCC Platform</h1>
+                    <p class="text-xs text-amber-400">استثمار وتخزين رقمي آمن</p>
+                </div>
+            </div>
+
+            <!-- Profile & KYC Status Quick Badge -->
+            <div class="flex items-center gap-4">
+                <div id="kycStatusBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>غير موثق (KYC)</span>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/80 p-1.5 pl-4 rounded-full border border-slate-700">
+                    <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span class="text-sm font-semibold text-slate-200 hidden md:inline">مستثمر FCC</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Wrapper -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto gap-2 mb-8 pb-2 border-b border-slate-800 text-sm font-semibold">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn px-5 py-3 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-chart-pie"></i> لوحة التحكم
+            </button>
+            <button onclick="switchTab('packages')" id="tab-packages" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-box-archive"></i> باقات الاستثمار
+            </button>
+            <button onclick="switchTab('task')" id="tab-task" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-bolt text-amber-400"></i> المهمة اليومية
+            </button>
+            <button onclick="switchTab('kyc')" id="tab-kyc" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-id-card"></i> توثيق الهوية (KYC)
+            </button>
+            <button onclick="switchTab('support')" id="tab-support" class="nav-btn px-5 py-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-headset text-emerald-400"></i> الدعم الفني
+            </button>
+        </div>
+
+        <!-- SECTION 1: DASHBOARD -->
+        <section id="sec-dashboard" class="tab-content space-y-8">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-panel p-6 rounded-2xl border-r-4 border-amber-500">
+                    <div class="flex justify-between items-center text-slate-400 mb-2">
+                        <span class="text-sm">إجمالي الرصيد</span>
+                        <i class="fa-solid fa-wallet text-amber-400 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-white" id="dashBalance">$0.00</div>
+                    <p class="text-xs text-slate-400 mt-2">متاح للسحب والاستثمار</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-r-4 border-emerald-500">
+                    <div class="flex justify-between items-center text-slate-400 mb-2">
+                        <span class="text-sm">الأرباح المكتسبة</span>
+                        <i class="fa-solid fa-chart-line text-emerald-400 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-emerald-400" id="dashEarnings">$0.00</div>
+                    <p class="text-xs text-slate-400 mt-2">من الاستثمار والمهام</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-r-4 border-blue-500">
+                    <div class="flex justify-between items-center text-slate-400 mb-2">
+                        <span class="text-sm">الباقات النشطة</span>
+                        <i class="fa-solid fa-layer-group text-blue-400 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-white" id="dashActiveCount">0</div>
+                    <p class="text-xs text-slate-400 mt-2">مدة كل باقة: 30 يوماً</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-r-4 border-purple-500">
+                    <div class="flex justify-between items-center text-slate-400 mb-2">
+                        <span class="text-sm">حالة المهمة اليومية</span>
+                        <i class="fa-solid fa-clock text-purple-400 text-xl"></i>
+                    </div>
+                    <div class="text-xl font-bold text-amber-400" id="dashTaskStatus">جاهزة للتفعيل</div>
+                    <p class="text-xs text-slate-400 mt-2">تنفذ مرة كل 24 ساعة</p>
+                </div>
+            </div>
+
+            <!-- Deposit Quick Wallet Box -->
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-down-to-bracket text-amber-400"></i> شحن الرصيد الفوري للاختبار
+                </h3>
+                <p class="text-sm text-slate-300">أضف رصيداً افتراضياً لتجربة الاشتراك الفوري في الباقات:</p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="addDemoBalance(50)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-sm">+ $50</button>
+                    <button onclick="addDemoBalance(100)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-sm">+ $100</button>
+                    <button onclick="addDemoBalance(300)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-sm">+ $300</button>
+                </div>
+            </div>
+
+            <!-- Active Investments List -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-blue-400"></i> باقاتي الإستثمارية النشطة
+                </h3>
+                <div id="activePackagesList" class="space-y-3">
+                    <div class="text-center py-8 text-slate-500 text-sm">لا توجد باقات نشطة حالياً. اختر باقة من قسم "باقات الاستثمار" للبدء.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: INVESTMENT PACKAGES -->
+        <section id="sec-packages" class="tab-content hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-3xl font-extrabold text-white">باقات الاستثمار والتخزين (FCC)</h2>
+                <p class="text-slate-400 text-sm">الباقات تبدأ من 15$ وتنتهي بـ 300$ بعائد يومي من 2% إلى 15% ولمدة 30 يوماً.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="packagesGrid">
+                <!-- Dynamically generated via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: DAILY TASK HANDLER -->
+        <section id="sec-task" class="tab-content hidden space-y-6">
+            <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl text-center space-y-6 border border-amber-500/20">
+                <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-3xl">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">تفعيل المهمة اليومية</h2>
+                    <p class="text-slate-400 text-sm mt-1">انقر على الزر مرة واحدة كل 24 ساعة لتحصيل أرباح باقاتك المعتمدة مباشرة لمحفظتك.</p>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                    <span class="text-xs text-slate-400">الوقت المتبقي للمهمة القادمة</span>
+                    <div id="taskTimer" class="text-3xl font-mono font-bold text-amber-400">جاهز الآن</div>
+                </div>
+
+                <button id="claimTaskBtn" onclick="executeDailyTask()" class="w-full py-4 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-lg shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]">
+                    <i class="fa-solid fa-play ml-2"></i> تفعيل المهمة وحساب الربح اليومي
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 4: KYC VERIFICATION -->
+        <section id="sec-kyc" class="tab-content hidden space-y-6">
+            <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-id-card text-amber-400"></i> توثيق حسابك بالهوية (KYC)
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">اختر بلدك وارفع مستنداتك الرسمية لتتم مراجعة الحساب وتوثيقه عبر البريد الرسمي للإدارة: <span class="text-amber-400 font-mono text-xs">nnnnaaatttnanooo@gmail.com</span></p>
+                </div>
+
+                <form id="kycForm" onsubmit="handleKYCSubmit(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">الدولة / البلد</label>
+                        <select id="kycCountry" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+                            <option value="">-- اختر الدولة --</option>
+                            <option value="SA">المملكة العربية السعودية</option>
+                            <option value="AE">الإمارات العربية المتحدة</option>
+                            <option value="EG">مصر</option>
+                            <option value="IQ">العراق</option>
+                            <option value="JO">الأردن</option>
+                            <option value="SY">سوريا</option>
+                            <option value="LB">لبنان</option>
+                            <option value="MA">المغرب</option>
+                            <option value="DZ">الجزائر</option>
+                            <option value="OTHER">دولة أخرى</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2">الاسم الكامل (حسب الهوية)</label>
+                            <input type="text" id="kycFullName" required placeholder="مثال: محمد أحمد" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2">نوع الوثيقة</label>
+                            <select id="kycDocType" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+                                <option value="id">بطاقة الهوية الوطنية</option>
+                                <option value="passport">جواز السفر</option>
+                                <option value="driver">رخصة القيادة</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">صورة الهوية (الوجه الأمامي)</label>
+                        <input type="file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-xl blue-gradient-btn text-white font-bold text-base shadow-lg shadow-blue-500/20">
+                        إرسال طلب التوثيق للمراجعة الفورية
+                    </button>
+                </form>
+
+                <div id="kycResultNotice" class="hidden p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm text-center font-bold">
+                    <i class="fa-solid fa-circle-check ml-1"></i> تم تقديم طلب التوثيق بنجاح وسيتم مطابقته مع البريد الإداري nnnnaaatttnanooo@gmail.com
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SUPPORT & SOCIAL CHANNELS -->
+        <section id="sec-support" class="tab-content hidden space-y-6">
+            <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6 text-center">
+                <div class="w-20 h-20 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-3xl">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">خدمة العملاء والدعم الفني المباشر</h2>
+                    <p class="text-slate-400 text-sm mt-1">فريق الدعم في منصة FCC جاهز لمساعدتك على مدار الساعة عبر القنوات التالية:</p>
+                </div>
+
+                <!-- Support Links Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                    <a href="https://wa.me/" target="_blank" class="flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-500 transition-all group">
+                        <i class="fa-brands fa-whatsapp text-emerald-400 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-white text-sm">واتساب الدعم</span>
+                        <span class="text-xs text-slate-400 mt-1">تواصل فوري</span>
+                    </a>
+
+                    <a href="https://t.me/" target="_blank" class="flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-900/80 border border-blue-500/30 hover:border-blue-500 transition-all group">
+                        <i class="fa-brands fa-telegram text-blue-400 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-white text-sm">قناة ومجموع التليجرام</span>
+                        <span class="text-xs text-slate-400 mt-1">انضم للمجتمع</span>
+                    </a>
+
+                    <a href="https://facebook.com/" target="_blank" class="flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-900/80 border border-indigo-500/30 hover:border-indigo-500 transition-all group">
+                        <i class="fa-brands fa-facebook text-indigo-400 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-white text-sm">صفحة الفيسبوك</span>
+                        <span class="text-xs text-slate-400 mt-1">تابع المستجدات</span>
+                    </a>
+                </div>
+
+                <!-- Email Box -->
+                <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400">البريد الإلكتروني الرسمي للإدارة والدعم</div>
+                            <div class="text-sm font-mono font-bold text-white">nnnnaaatttnanooo@gmail.com</div>
+                        </div>
+                    </div>
+                    <a href="mailto:nnnnaaatttnanooo@gmail.com" class="px-4 py-2 rounded-xl gold-gradient-btn text-slate-950 font-bold text-xs">إرسال بريد</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Quick Support Widget -->
+    <div class="fixed bottom-6 left-6 z-50 flex flex-col gap-3">
+        <a href="https://wa.me/" target="_blank" title="تواصل عبر واتساب" class="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-lg transition-transform hover:scale-110">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="https://t.me/" target="_blank" title="تواصل عبر تليجرام" class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center text-xl shadow-lg transition-transform hover:scale-110">
+            <i class="fa-brands fa-telegram"></i>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>© 2026 FCC Platform. جميع الحقوق محفوظة. منصة استثمار وتخزين رقمي آمنة.</p>
+            <p>للتواصل الإداري الرسمي: <span class="text-amber-400 font-mono">nnnnaaatttnanooo@gmail.com</span></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Packages Data ($15 to $300, 2% to 15% daily, 30 days)
+        const packagesData = [
+            { id: 1, name: "الباقة الأساسية", price: 15, rate: 2, duration: 30, icon: "fa-seedling" },
+            { id: 2, name: "الباقة البرونزية", price: 45, rate: 4, duration: 30, icon: "fa-shield-halved" },
+            { id: 3, name: "الباقة الفضية", price: 90, rate: 7, duration: 30, icon: "fa-coins" },
+            { id: 4, name: "الباقة الذهبية", price: 150, rate: 10, duration: 30, icon: "fa-gem" },
+            { id: 5, name: "الباقة الماسية", price: 220, rate: 12.5, duration: 30, icon: "fa-crown" },
+            { id: 6, name: "باقة النخبة VIP", price: 300, rate: 15, duration: 30, icon: "fa-bolt" }
+        ];
+
+        let state = {
+            balance: 100, // Demo starting balance
+            earnings: 0,
+            activeInvestments: [],
+            lastTaskTime: null,
+            kycSubmitted: false
+        };
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPackages();
+            updateUI();
+            setInterval(updateTaskTimerUI, 1000);
+        });
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+            activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+        }
+
+        // Render Packages
+        function renderPackages() {
+            const grid = document.getElementById('packagesGrid');
+            grid.innerHTML = packagesData.map(pkg => {
+                const dailyProfit = (pkg.price * (pkg.rate / 100)).toFixed(2);
+                const totalProfit = (dailyProfit * pkg.duration).toFixed(2);
+
+                return `
+                    <div class="glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between border border-slate-800 hover:border-amber-500/40 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-2xl">
+                                    <i class="fa-solid ${pkg.icon}"></i>
+                                </div>
+                                <span class="bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full text-xs">
+                                    ربح يومي ${pkg.rate}%
+                                </span>
+                            </div>
+
+                            <h3 class="text-xl font-bold text-white mb-1">${pkg.name}</h3>
+                            <div class="text-3xl font-extrabold text-amber-400 my-3">$${pkg.price} <span class="text-xs text-slate-400 font-normal">/ لمدة ${pkg.duration} يوماً</span></div>
+
+                            <div class="space-y-2 py-3 my-3 border-y border-slate-800 text-sm text-slate-300">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">الربح اليومي المتوقع:</span>
+                                    <span class="font-bold text-emerald-400">+$${dailyProfit}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">إجمالي الأرباح بالدورة:</span>
+                                    <span class="font-bold text-emerald-400">+$${totalProfit}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="investInPackage(${pkg.id})" class="w-full py-3 mt-4 rounded-xl gold-gradient-btn text-slate-950 font-bold transition-transform active:scale-95">
+                            اشتراك الآن ($${pkg.price})
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Invest Action
+        function investInPackage(pkgId) {
+            const pkg = packagesData.find(p => p.id === pkgId);
+            if (state.balance < pkg.price) {
+                alert(`رصيدك الحالي ($${state.balance.toFixed(2)}) لا يكفي للاشتراك في هذه الباقة ($${pkg.price}). يرجى شحن الرصيد أولاً.`);
+                return;
+            }
+
+            state.balance -= pkg.price;
+            state.activeInvestments.push({
+                ...pkg,
+                purchaseDate: new Date(),
+                dailyProfitAmount: (pkg.price * (pkg.rate / 100))
+            });
+
+            updateUI();
+            alert(`مبروك! تم الاشتراك في ${pkg.name} بنجاح بقيمة $${pkg.price}`);
+            switchTab('dashboard');
+        }
+
+        // Add Demo Balance
+        function addDemoBalance(amount) {
+            state.balance += amount;
+            updateUI();
+        }
+
+        // Execute Daily Task
+        function executeDailyTask() {
+            const now = new Date().getTime();
+            if (state.lastTaskTime && (now - state.lastTaskTime < 24 * 60 * 60 * 1000)) {
+                alert("لقد قمت بتنفيذ المهمة اليومية بالفعل! يرجى الانتظار حتى انتهاء مؤقت الـ 24 ساعة.");
+                return;
+            }
+
+            if (state.activeInvestments.length === 0) {
+                alert("ليس لديك باقات نشطة حالياً. يرجى الاشتراك في باقة واحدة على الأقل لتفعيل المهمة وحصد الأرباح.");
+                return;
+            }
+
+            let totalTaskProfit = 0;
+            state.activeInvestments.forEach(inv => {
+                totalTaskProfit += inv.dailyProfitAmount;
+            });
+
+            state.earnings += totalTaskProfit;
+            state.balance += totalTaskProfit;
+            state.lastTaskTime = now;
+
+            updateUI();
+            alert(`تم تنفيذ المهمة بنجاح! تم إضافة أرباح الباقات اليومية ($${totalTaskProfit.toFixed(2)}) إلى حسابك.`);
+        }
+
+        // Update Timer UI
+        function updateTaskTimerUI() {
+            const timerEl = document.getElementById('taskTimer');
+            const statusEl = document.getElementById('dashTaskStatus');
+            const btnEl = document.getElementById('claimTaskBtn');
+
+            if (!state.lastTaskTime) {
+                timerEl.innerText = "جاهز للتفعيل الآن";
+                statusEl.innerText = "جاهزة للتفعيل";
+                btnEl.disabled = false;
+                btnEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            const now = new Date().getTime();
+            const diff = (state.lastTaskTime + 24 * 60 * 60 * 1000) - now;
+
+            if (diff <= 0) {
+                timerEl.innerText = "جاهز للتفعيل الآن";
+                statusEl.innerText = "جاهزة للتفعيل";
+                btnEl.disabled = false;
+                btnEl.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timerEl.innerText = timeStr;
+                statusEl.innerText = `انتظار (${timeStr})`;
+                btnEl.disabled = true;
+                btnEl.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Handle KYC Submit
+        function handleKYCSubmit(e) {
+            e.preventDefault();
+            state.kycSubmitted = true;
+            document.getElementById('kycForm').reset();
+            document.getElementById('kycResultNotice').classList.remove('hidden');
+
+            const badge = document.getElementById('kycStatusBadge');
+            badge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20";
+            badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>قيد المراجعة (KYC)</span>`;
+        }
+
+        // General UI Update
+        function updateUI() {
+            document.getElementById('dashBalance').innerText = `$${state.balance.toFixed(2)}`;
+            document.getElementById('dashEarnings').innerText = `$${state.earnings.ydesired ? '' : state.earnings.toFixed(2)}`;
+            document.getElementById('dashEarnings').innerText = `$${state.earnings.toFixed(2)}`;
+            document.getElementById('dashActiveCount').innerText = state.activeInvestments.length;
+
+            const listEl = document.getElementById('activePackagesList');
+            if (state.activeInvestments.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-8 text-slate-500 text-sm">لا توجد باقات نشطة حالياً. اختر باقة من قسم "باقات الاستثمار" للبدء.</div>`;
+            } else {
+                listEl.innerHTML = state.activeInvestments.map(inv => `
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
+                                <i class="fa-solid ${inv.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">${inv.name}</h4>
+                                <span class="text-xs text-slate-400">ربح يومي: $${inv.dailyProfitAmount.toFixed(2)} (${inv.rate}%)</span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            نشطة (30 يوم)
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>
