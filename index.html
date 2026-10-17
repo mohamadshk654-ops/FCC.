@@ -68,7 +68,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold text-white">توثيق الهوية (KYC)</h2>
-                    <p class="text-xs text-slate-400">أدخل بياناتك ورفع صور الهوية لربطها بحسابك</p>
+                    <p class="text-xs text-slate-400">أدخل بياناتك ورفع صور الهوية لربطها بحسابك والتحقق من قبل الشركة</p>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@
                 </div>
 
                 <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
-                    إرسال طلب التوثيق بالكامل للأدمن
+                    إرسال طلب التوثيق للشركة للمراجعة
                 </button>
             </form>
         </div>
@@ -255,7 +255,7 @@
                     <input type="password" id="regPassConfirm" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">كود الدعوة (اختر اختياري)</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">كود الدعوة (اختياري)</label>
                     <input type="text" id="regRefCode" placeholder="مثال: FCC-8899" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500 uppercase font-mono">
                 </div>
                 <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.01]">
@@ -282,9 +282,10 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <!-- Admin Badge ONLY Visible to Admin -->
                     <div id="adminBadge" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
                         <i class="fa-solid fa-user-gear"></i>
-                        <span>حساب الأدمن</span>
+                        <span>إدارة الشركة (Admin)</span>
                     </div>
 
                     <div id="kycNavBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -309,7 +310,7 @@
         <!-- Main Dynamic Content Wrapper -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
 
-            <!-- ADMIN DASHBOARD -->
+            <!-- ADMIN DASHBOARD (RESTRICTED TO ADMIN ONLY) -->
             <section id="sec-admin" class="tab-content hidden space-y-8">
                 <div class="glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -323,7 +324,7 @@
 
                     <div class="space-y-4">
                         <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                            <i class="fa-solid fa-clock-rotate-left"></i> طلبات شحن الرصيد المعلقة
+                            <i class="fa-solid fa-clock-rotate-left"></i> طلبات شحن الرصيد المعلقة للشركة
                         </h3>
                         <div id="adminDepositRequests" class="space-y-3"></div>
                     </div>
@@ -332,7 +333,7 @@
 
                     <div class="space-y-4">
                         <h3 class="text-lg font-bold text-rose-400 flex items-center gap-2">
-                            <i class="fa-solid fa-hand-holding-dollar"></i> طلبات السحب المعلقة
+                            <i class="fa-solid fa-hand-holding-dollar"></i> طلبات السحب المعلقة للشركة
                         </h3>
                         <div id="adminWithdrawRequests" class="space-y-3"></div>
                     </div>
@@ -341,7 +342,7 @@
 
                     <div class="space-y-4">
                         <h3 class="text-lg font-bold text-blue-400 flex items-center gap-2">
-                            <i class="fa-solid fa-id-card"></i> طلبات توثيق الهوية (مع معاينة الصور)
+                            <i class="fa-solid fa-id-card"></i> طلبات توثيق الهوية المعلقة للشركة
                         </h3>
                         <div id="adminKYCRequests" class="space-y-3"></div>
                     </div>
@@ -408,7 +409,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: ACCOUNT PROFILE (حسابي) WITH INTEGRATED KYC ACTION -->
+            <!-- SECTION 2: ACCOUNT PROFILE (حسابي) -->
             <section id="sec-profile" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-amber-500/30">
                     <div class="flex items-center gap-4 border-b border-slate-800 pb-6">
@@ -427,12 +428,9 @@
                             <div class="text-2xl font-black text-amber-400" id="profileBalance">$0.00</div>
                         </div>
 
-                        <!-- Dynamic KYC Status & Action Button -->
                         <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 flex flex-col justify-between">
                             <span class="text-xs text-slate-400">حالة توثيق الحساب (KYC):</span>
-                            <div id="profileKycDisplayContainer">
-                                <!-- Dynamic rendering of status or action button -->
-                            </div>
+                            <div id="profileKycDisplayContainer"></div>
                         </div>
                     </div>
 
@@ -462,7 +460,7 @@
                 <div class="max-w-3xl mx-auto space-y-6">
                     <div class="text-center space-y-2">
                         <h2 class="text-2xl font-bold text-white">شحن رصيد المحفظة</h2>
-                        <p class="text-slate-400 text-sm">الحد الأدنى للشحن هو <strong class="text-amber-400">$15</strong>. اختر الشبكة وقم بإرسال الشحن مباشرة:</p>
+                        <p class="text-slate-400 text-sm">الحد الأدنى للشحن هو <strong class="text-amber-400">$15</strong>. اختر الشبكة وأرسل طلب الإيداع للشركة للموافقة:</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -508,7 +506,7 @@
                                 <input type="number" id="depositAmount" min="15" required placeholder="مثال: 50" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                             </div>
                             <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
-                                تأكيد وإرسال طلب الشحن للأدمن
+                                إرسال طلب الإيداع للشركة للموافقة
                             </button>
                         </form>
                     </div>
@@ -523,7 +521,7 @@
                             <i class="fa-solid fa-hand-holding-dollar"></i>
                         </div>
                         <h2 class="text-2xl font-bold text-white">سحب الأرباح والرصيد</h2>
-                        <p class="text-slate-400 text-sm">حدد المبلغ المراد سحبه وأدخل عنوان محفظتك لإرسال الطلب للأدمن:</p>
+                        <p class="text-slate-400 text-sm">حدد المبلغ المراد سحبه وأدخل عنوان محفظتك لإرسال الطلب للشركة:</p>
                     </div>
 
                     <form onsubmit="handleWithdrawSubmit(event)" class="space-y-4">
@@ -544,7 +542,7 @@
                             <input type="text" id="withdrawAddress" required placeholder="أدخل عنوان محفظتك الشخصية هنا" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                         </div>
                         <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-extrabold text-sm shadow-lg shadow-rose-500/20">
-                            تأكيد وإرسال طلب السحب للأدمن
+                            إرسال طلب السحب للشركة للمعالجة
                         </button>
                     </form>
                 </div>
@@ -605,11 +603,11 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
                                 <span class="text-xs text-slate-400">أعضاء الفريق النشطين</span>
-                                <div class="text-2xl font-extrabold text-white mt-1">1</div>
+                                <div class="text-2xl font-extrabold text-white mt-1" id="teamMembersCount">0</div>
                             </div>
                             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
                                 <span class="text-xs text-slate-400">أرباح عمولة الفريق المضافة (3%)</span>
-                                <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="teamEarningsDisplay">$3.00</div>
+                                <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="teamEarningsDisplay">$0.00</div>
                             </div>
                         </div>
                     </div>
@@ -618,7 +616,7 @@
 
         </main>
 
-        <!-- ==================== BOTTOM NAVIGATION BAR (SIMPLIFIED & CLEAN) ==================== -->
+        <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
         <nav class="fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-slate-800 py-2.5 px-2">
             <div class="max-w-lg mx-auto flex items-center justify-around text-xs font-semibold">
                 <button onclick="switchTab('admin')" id="nav-btn-admin" class="hidden nav-bottom-btn flex flex-col items-center text-purple-400 gap-1">
@@ -678,19 +676,18 @@
             { id: 6, name: "باقة النخبة VIP", price: 300, rate: 18, duration: 120, icon: "fa-bolt" }
         ];
 
+        // Zero Default Balance For User ($0.00)
         let state = {
             currentUser: null,
             isAdmin: false,
-            balance: 3.00,
-            earnings: 3.00,
+            balance: 0.00,
+            earnings: 0.00,
             activeInvestments: [],
             lastTaskTime: null,
             kycStatus: 'unverified'
         };
 
-        let logs = [
-            { id: 1, type: 'مكافأة الإحالة', title: 'إضافة عمولة الفريق 3%', amount: '+$3.00', date: new Date().toLocaleTimeString(), status: 'مكتمل' }
-        ];
+        let logs = [];
 
         let pendingDeposits = [];
         let pendingWithdrawals = [];
@@ -797,12 +794,15 @@
                 document.getElementById('welcomeModal').classList.remove('hidden');
             }
 
+            // Hide/Show Admin Badge & Button strictly for Admin Email
             if (state.isAdmin) {
                 document.getElementById('adminBadge').classList.remove('hidden');
                 document.getElementById('nav-btn-admin').classList.remove('hidden');
                 renderAdminDashboard();
                 switchTab('admin');
             } else {
+                document.getElementById('adminBadge').classList.add('hidden');
+                document.getElementById('nav-btn-admin').classList.add('hidden');
                 switchTab('dashboard');
             }
 
@@ -818,6 +818,12 @@
         }
 
         function switchTab(tabId) {
+            // Prevent non-admin users from opening admin section
+            if (tabId === 'admin' && !state.isAdmin) {
+                alert("صفحة الأدمن مخصصة لإدارة الشركة فقط.");
+                return;
+            }
+
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-bottom-btn').forEach(btn => {
                 btn.classList.remove('text-amber-400');
@@ -904,7 +910,7 @@
         function copyRefLink() {
             const fullLink = `${window.location.origin}${window.location.pathname}?ref=FCC-8899`;
             navigator.clipboard.writeText(fullLink);
-            alert("تم نسخ رابط الدعوة الشغال بنجاح!");
+            alert("تم نسخ رابط الدعوة الخاص بك بنجاح!");
         }
 
         function handleDepositSubmit(e) {
@@ -925,12 +931,12 @@
                 title: `طلب شحن عبر ${currentSelectedDepositMethod.toUpperCase()}`,
                 amount: `+$${amount.toFixed(2)}`,
                 date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة'
+                status: 'قيد المراجعة لدى الشركة'
             });
 
             document.getElementById('depositAmount').value = '';
 
-            alert('تم إرسال طلب الشحن بنجاح للأدمن للموافقة والإضافة.');
+            alert('تم إرسال طلب الشحن بنجاح للشركة للموافقة والإضافة.');
             if (state.isAdmin) renderAdminDashboard();
             switchTab('dashboard');
         }
@@ -961,13 +967,13 @@
                 title: `طلب سحب إلى ${method}`,
                 amount: `-$${amount.toFixed(2)}`,
                 date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة'
+                status: 'قيد المراجعة لدى الشركة'
             });
 
             document.getElementById('withdrawAmount').value = '';
             document.getElementById('withdrawAddress').value = '';
 
-            alert('تم إرسال طلب السحب للأدمن لمعالجته وقبوله.');
+            alert('تم إرسال طلب السحب للشركة لمعالجته وقبوله.');
             if (state.isAdmin) renderAdminDashboard();
             switchTab('dashboard');
         }
@@ -1001,16 +1007,18 @@
                 title: `تقديم مستندات KYC (${country})`,
                 amount: '-',
                 date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة'
+                status: 'قيد المراجعة لدى الشركة'
             });
 
             closeKycModal();
             updateUI();
-            alert('تم إرسال مستندات التوثيق بنجاح إلى الأدمن للتدقيق.');
+            alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
             if (state.isAdmin) renderAdminDashboard();
         }
 
         function renderAdminDashboard() {
+            if (!state.isAdmin) return;
+
             const depList = document.getElementById('adminDepositRequests');
             const withList = document.getElementById('adminWithdrawRequests');
             const kycList = document.getElementById('adminKYCRequests');
@@ -1089,7 +1097,7 @@
                 logs.unshift({
                     id: Date.now(),
                     type: 'شحن رصيد',
-                    title: `قبول إيداع مبلغ $${req.amount}`,
+                    title: `موافقة الشركة على إيداع مبلغ $${req.amount}`,
                     amount: `+$${req.amount.toFixed(2)}`,
                     date: new Date().toLocaleTimeString(),
                     status: 'مكتمل'
@@ -1115,7 +1123,7 @@
                 logs.unshift({
                     id: Date.now(),
                     type: 'سحب رصيد',
-                    title: `خصم وتحويل مبلغ $${req.amount}`,
+                    title: `موافقة الشركة وتحويل مبلغ $${req.amount}`,
                     amount: `-$${req.amount.toFixed(2)}`,
                     date: new Date().toLocaleTimeString(),
                     status: 'مكتمل'
@@ -1139,7 +1147,7 @@
             logs.unshift({
                 id: Date.now(),
                 type: 'توثيق الهوية',
-                title: 'قبول توثيق حسابك بالكامل',
+                title: 'موافقة الشركة على توثيق حسابك بالكامل',
                 amount: '-',
                 date: new Date().toLocaleTimeString(),
                 status: 'ناجح'
@@ -1160,7 +1168,7 @@
         function investInPackage(pkgId) {
             const pkg = packagesData.find(p => p.id === pkgId);
             if (state.balance < pkg.price) {
-                alert(`رصيدك الحالي ($${state.balance.toFixed(2)}) غير كافٍ للاشتراك. اشحن أولاً.`);
+                alert(`رصيدك الحالي ($${state.balance.toFixed(2)}) غير كافٍ للاشتراك. اشحن رصيدك أولاً.`);
                 switchTab('deposit');
                 return;
             }
@@ -1287,7 +1295,7 @@
                 if (state.kycStatus === 'verified') {
                     profKycContainer.innerHTML = `<div class="text-sm font-bold text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> تم التوثيق بنجاح ✅</div>`;
                 } else if (state.kycStatus === 'pending') {
-                    profKycContainer.innerHTML = `<div class="text-sm font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> قيد المراجعة والتدقيق ⏳</div>`;
+                    profKycContainer.innerHTML = `<div class="text-sm font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> قيد المراجعة لدى الشركة ⏳</div>`;
                 } else {
                     profKycContainer.innerHTML = `
                         <button onclick="openKycModal()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
