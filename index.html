@@ -45,7 +45,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 pb-24">
 
-    <!-- ==================== FLOATING CUSTOMER SUPPORT BUTTONS ==================== -->
+    <!-- FLOATING SUPPORT BUTTONS -->
     <div class="fixed bottom-20 left-4 z-50 flex flex-col gap-2.5">
         <a href="https://t.me/" target="_blank" title="تواصل عبر تليجرام" class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center text-xl shadow-xl transition-all hover:scale-110 border border-blue-400/30">
             <i class="fa-brands fa-telegram"></i>
@@ -55,7 +55,7 @@
         </a>
     </div>
 
-    <!-- ==================== KYC POPUP MODAL (نافذة التوثيق المنبثقة) ==================== -->
+    <!-- KYC POPUP MODAL -->
     <div id="kycModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="max-w-lg w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
             <button onclick="closeKycModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    <!-- ==================== SYSTEM LOGS MODAL ==================== -->
+    <!-- SYSTEM LOGS MODAL -->
     <div id="logsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="max-w-xl w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[85vh] overflow-y-auto">
             <button onclick="closeLogsModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    <!-- ==================== WELCOME & TRUST MODAL ==================== -->
+    <!-- WELCOME & TRUST MODAL -->
     <div id="welcomeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="max-w-xl w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
             <button onclick="closeWelcomeModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
@@ -207,7 +207,7 @@
         </div>
     </div>
 
-    <!-- ==================== AUTHENTICATION SCREEN ==================== -->
+    <!-- AUTHENTICATION SCREEN -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 hero-glow bg-[#0b0f19]">
         <div class="max-w-md w-full glass-panel p-8 rounded-3xl shadow-2xl border border-slate-800 space-y-6">
             <div class="text-center space-y-2">
@@ -265,7 +265,7 @@
         </div>
     </div>
 
-    <!-- ==================== MAIN PLATFORM APP ==================== -->
+    <!-- MAIN PLATFORM APP -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col justify-between">
         
         <!-- Top Navigation Bar -->
@@ -282,7 +282,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <!-- Admin Badge ONLY Visible to Admin -->
                     <div id="adminBadge" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
                         <i class="fa-solid fa-user-gear"></i>
                         <span>إدارة الشركة (Admin)</span>
@@ -310,7 +309,7 @@
         <!-- Main Dynamic Content Wrapper -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
 
-            <!-- ADMIN DASHBOARD (RESTRICTED TO ADMIN ONLY) -->
+            <!-- ADMIN DASHBOARD -->
             <section id="sec-admin" class="tab-content hidden space-y-8">
                 <div class="glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -349,7 +348,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 1: DASHBOARD -->
+            <!-- DASHBOARD -->
             <section id="sec-dashboard" class="tab-content space-y-8">
                 <div class="flex justify-between items-center bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
                     <div>
@@ -409,7 +408,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: ACCOUNT PROFILE (حسابي) -->
+            <!-- ACCOUNT PROFILE (حسابي) -->
             <section id="sec-profile" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-amber-500/30">
                     <div class="flex items-center gap-4 border-b border-slate-800 pb-6">
@@ -445,7 +444,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 3: INVESTMENT PACKAGES -->
+            <!-- INVESTMENT PACKAGES -->
             <section id="sec-packages" class="tab-content hidden space-y-6">
                 <div class="text-center max-w-2xl mx-auto space-y-2">
                     <h2 class="text-3xl font-extrabold text-white">باقات الاستثمار والتخزين الرقمي</h2>
@@ -455,7 +454,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="packagesGrid"></div>
             </section>
 
-            <!-- SECTION 4: DEPOSIT METHODS -->
+            <!-- DEPOSIT METHODS -->
             <section id="sec-deposit" class="tab-content hidden space-y-6">
                 <div class="max-w-3xl mx-auto space-y-6">
                     <div class="text-center space-y-2">
@@ -513,7 +512,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 5: WITHDRAWAL MODULE -->
+            <!-- WITHDRAWAL MODULE -->
             <section id="sec-withdraw" class="tab-content hidden space-y-6">
                 <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl space-y-6 border border-rose-500/20">
                     <div class="text-center space-y-2">
@@ -548,7 +547,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 6: DAILY TASK HANDLER PAGE -->
+            <!-- DAILY TASK HANDLER PAGE -->
             <section id="sec-task" class="tab-content hidden space-y-6">
                 <div class="max-w-xl mx-auto glass-panel p-8 rounded-3xl text-center space-y-6 border border-amber-500/20">
                     <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-3xl">
@@ -570,7 +569,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 7: TEAM & REFERRAL PROGRAM -->
+            <!-- TEAM & REFERRAL PROGRAM -->
             <section id="sec-team" class="tab-content hidden space-y-6">
                 <div class="max-w-3xl mx-auto space-y-6">
                     <div class="text-center space-y-2">
@@ -616,7 +615,7 @@
 
         </main>
 
-        <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+        <!-- BOTTOM NAVIGATION BAR -->
         <nav class="fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-slate-800 py-2.5 px-2">
             <div class="max-w-lg mx-auto flex items-center justify-around text-xs font-semibold">
                 <button onclick="switchTab('admin')" id="nav-btn-admin" class="hidden nav-bottom-btn flex flex-col items-center text-purple-400 gap-1">
@@ -663,7 +662,7 @@
 
     </div>
 
-    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <!-- JAVASCRIPT LOGIC WITH REPOSITORIES STORAGE -->
     <script>
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
@@ -676,7 +675,6 @@
             { id: 6, name: "باقة النخبة VIP", price: 300, rate: 18, duration: 120, icon: "fa-bolt" }
         ];
 
-        // Zero Default Balance For User ($0.00)
         let state = {
             currentUser: null,
             isAdmin: false,
@@ -689,6 +687,19 @@
 
         let logs = [];
 
+        // Global Shared Data Stores via LocalStorage
+        function loadSharedAdminData() {
+            pendingDeposits = JSON.parse(localStorage.getItem('fcc_pending_deposits') || '[]');
+            pendingWithdrawals = JSON.parse(localStorage.getItem('fcc_pending_withdrawals') || '[]');
+            pendingKYCs = JSON.parse(localStorage.getItem('fcc_pending_kycs') || '[]');
+        }
+
+        function saveSharedAdminData() {
+            localStorage.setItem('fcc_pending_deposits', JSON.stringify(pendingDeposits));
+            localStorage.setItem('fcc_pending_withdrawals', JSON.stringify(pendingWithdrawals));
+            localStorage.setItem('fcc_pending_kycs', JSON.stringify(pendingKYCs));
+        }
+
         let pendingDeposits = [];
         let pendingWithdrawals = [];
         let pendingKYCs = [];
@@ -696,6 +707,7 @@
         let currentSelectedDepositMethod = 'trc20';
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadSharedAdminData();
             renderPackages();
             setInterval(updateTaskTimerUI, 1000);
             checkUrlRefCode();
@@ -794,7 +806,8 @@
                 document.getElementById('welcomeModal').classList.remove('hidden');
             }
 
-            // Hide/Show Admin Badge & Button strictly for Admin Email
+            loadSharedAdminData();
+
             if (state.isAdmin) {
                 document.getElementById('adminBadge').classList.remove('hidden');
                 document.getElementById('nav-btn-admin').classList.remove('hidden');
@@ -818,7 +831,6 @@
         }
 
         function switchTab(tabId) {
-            // Prevent non-admin users from opening admin section
             if (tabId === 'admin' && !state.isAdmin) {
                 alert("صفحة الأدمن مخصصة لإدارة الشركة فقط.");
                 return;
@@ -835,6 +847,10 @@
             if (activeNav) {
                 activeNav.classList.remove('text-slate-400');
                 activeNav.classList.add('text-amber-400');
+            }
+
+            if (tabId === 'admin' && state.isAdmin) {
+                renderAdminDashboard();
             }
         }
 
@@ -917,6 +933,7 @@
             e.preventDefault();
             const amount = parseFloat(document.getElementById('depositAmount').value);
 
+            loadSharedAdminData();
             pendingDeposits.push({
                 id: Date.now(),
                 userEmail: state.currentUser.email,
@@ -924,6 +941,7 @@
                 amount: amount,
                 method: currentSelectedDepositMethod.toUpperCase()
             });
+            saveSharedAdminData();
 
             logs.unshift({
                 id: Date.now(),
@@ -937,7 +955,6 @@
             document.getElementById('depositAmount').value = '';
 
             alert('تم إرسال طلب الشحن بنجاح للشركة للموافقة والإضافة.');
-            if (state.isAdmin) renderAdminDashboard();
             switchTab('dashboard');
         }
 
@@ -952,6 +969,7 @@
                 return;
             }
 
+            loadSharedAdminData();
             pendingWithdrawals.push({
                 id: Date.now(),
                 userEmail: state.currentUser.email,
@@ -960,6 +978,7 @@
                 method: method,
                 address: address
             });
+            saveSharedAdminData();
 
             logs.unshift({
                 id: Date.now(),
@@ -974,7 +993,6 @@
             document.getElementById('withdrawAddress').value = '';
 
             alert('تم إرسال طلب السحب للشركة لمعالجته وقبوله.');
-            if (state.isAdmin) renderAdminDashboard();
             switchTab('dashboard');
         }
 
@@ -986,38 +1004,51 @@
             const frontFile = document.getElementById('kycFrontFile').files[0];
             const backFile = document.getElementById('kycBackFile').files[0];
 
-            const frontUrl = frontFile ? URL.createObjectURL(frontFile) : '#';
-            const backUrl = backFile ? URL.createObjectURL(backFile) : '#';
+            const readerFront = new FileReader();
+            const readerBack = new FileReader();
 
-            pendingKYCs.push({
-                id: Date.now(),
-                userEmail: state.currentUser.email,
-                fullName: fullName,
-                country: country,
-                docType: docType,
-                frontImg: frontUrl,
-                backImg: backUrl
-            });
+            readerFront.onload = function(eventFront) {
+                const frontBase64 = eventFront.target.result;
+                
+                readerBack.onload = function(eventBack) {
+                    const backBase64 = eventBack.target.result;
 
-            state.kycStatus = 'pending';
+                    loadSharedAdminData();
+                    pendingKYCs.push({
+                        id: Date.now(),
+                        userEmail: state.currentUser.email,
+                        fullName: fullName,
+                        country: country,
+                        docType: docType,
+                        frontImg: frontBase64,
+                        backImg: backBase64
+                    });
+                    saveSharedAdminData();
 
-            logs.unshift({
-                id: Date.now(),
-                type: 'توثيق الهوية',
-                title: `تقديم مستندات KYC (${country})`,
-                amount: '-',
-                date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة لدى الشركة'
-            });
+                    state.kycStatus = 'pending';
 
-            closeKycModal();
-            updateUI();
-            alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
-            if (state.isAdmin) renderAdminDashboard();
+                    logs.unshift({
+                        id: Date.now(),
+                        type: 'توثيق الهوية',
+                        title: `تقديم مستندات KYC (${country})`,
+                        amount: '-',
+                        date: new Date().toLocaleTimeString(),
+                        status: 'قيد المراجعة لدى الشركة'
+                    });
+
+                    closeKycModal();
+                    updateUI();
+                    alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
+                }
+                readerBack.readAsDataURL(backFile);
+            }
+            readerFront.readAsDataURL(frontFile);
         }
 
         function renderAdminDashboard() {
             if (!state.isAdmin) return;
+
+            loadSharedAdminData();
 
             const depList = document.getElementById('adminDepositRequests');
             const withList = document.getElementById('adminWithdrawRequests');
@@ -1089,19 +1120,14 @@
         }
 
         function approveDeposit(id) {
+            loadSharedAdminData();
             const req = pendingDeposits.find(d => d.id === id);
             if (req) {
-                state.balance += req.amount;
+                if (state.currentUser && state.currentUser.email === req.userEmail) {
+                    state.balance += req.amount;
+                }
                 pendingDeposits = pendingDeposits.filter(d => d.id !== id);
-
-                logs.unshift({
-                    id: Date.now(),
-                    type: 'شحن رصيد',
-                    title: `موافقة الشركة على إيداع مبلغ $${req.amount}`,
-                    amount: `+$${req.amount.toFixed(2)}`,
-                    date: new Date().toLocaleTimeString(),
-                    status: 'مكتمل'
-                });
+                saveSharedAdminData();
 
                 renderAdminDashboard();
                 updateUI();
@@ -1110,24 +1136,21 @@
         }
 
         function rejectDeposit(id) {
+            loadSharedAdminData();
             pendingDeposits = pendingDeposits.filter(d => d.id !== id);
+            saveSharedAdminData();
             renderAdminDashboard();
         }
 
         function approveWithdrawal(id) {
+            loadSharedAdminData();
             const req = pendingWithdrawals.find(w => w.id === id);
             if (req) {
-                state.balance -= req.amount;
+                if (state.currentUser && state.currentUser.email === req.userEmail) {
+                    state.balance -= req.amount;
+                }
                 pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
-
-                logs.unshift({
-                    id: Date.now(),
-                    type: 'سحب رصيد',
-                    title: `موافقة الشركة وتحويل مبلغ $${req.amount}`,
-                    amount: `-$${req.amount.toFixed(2)}`,
-                    date: new Date().toLocaleTimeString(),
-                    status: 'مكتمل'
-                });
+                saveSharedAdminData();
 
                 renderAdminDashboard();
                 updateUI();
@@ -1136,33 +1159,33 @@
         }
 
         function rejectWithdrawal(id) {
+            loadSharedAdminData();
             pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
+            saveSharedAdminData();
             renderAdminDashboard();
         }
 
         function approveKYC(id) {
-            state.kycStatus = 'verified';
-            pendingKYCs = pendingKYCs.filter(k => k.id !== id);
+            loadSharedAdminData();
+            const req = pendingKYCs.find(k => k.id === id);
+            if (req) {
+                if (state.currentUser && state.currentUser.email === req.userEmail) {
+                    state.kycStatus = 'verified';
+                }
+                pendingKYCs = pendingKYCs.filter(k => k.id !== id);
+                saveSharedAdminData();
 
-            logs.unshift({
-                id: Date.now(),
-                type: 'توثيق الهوية',
-                title: 'موافقة الشركة على توثيق حسابك بالكامل',
-                amount: '-',
-                date: new Date().toLocaleTimeString(),
-                status: 'ناجح'
-            });
-
-            renderAdminDashboard();
-            updateUI();
-            alert('تم قبول توثيق حساب المستثمر.');
+                renderAdminDashboard();
+                updateUI();
+                alert('تم قبول توثيق حساب المستثمر بنجاح.');
+            }
         }
 
         function rejectKYC(id) {
-            state.kycStatus = 'unverified';
+            loadSharedAdminData();
             pendingKYCs = pendingKYCs.filter(k => k.id !== id);
+            saveSharedAdminData();
             renderAdminDashboard();
-            updateUI();
         }
 
         function investInPackage(pkgId) {
@@ -1355,4 +1378,3 @@
     </script>
 </body>
 </html>
- 
