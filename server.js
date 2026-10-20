@@ -89,10 +89,11 @@ app.get('/api/user/:email', async (req, res) => {
 app.post('/api/deposit', async (req, res) => {
     try {
         const { email, amount, method } = req.body;
+        const parsedAmount = parseFloat(amount);
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ success: false });
+        if (!user || isNaN(parsedAmount) || parsedAmount <= 0) return res.status(400).json({ success: false, message: 'مبلغ غير صالح' });
 
-        const depositReq = new Deposit({ id: Date.now(), userEmail: email, userName: user.name, amount, method });
+        const depositReq = new Deposit({ id: Date.now(), userEmail: email, userName: user.name, amount: parsedAmount, method });
         await depositReq.save();
         res.json({ success: true, message: 'تم إرسال طلب الإيداع' });
     } catch (err) {
@@ -103,10 +104,14 @@ app.post('/api/deposit', async (req, res) => {
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { email, amount, method, address } = req.body;
+        const parsedAmount = parseFloat(amount);
         const user = await User.findOne({ email });
-        if (!user || amount > user.balance) return res.status(400).json({ success: false, message: 'رصيد غير كافٍ' });
+        
+        if (!user || isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > user.balance) {
+            return res.status(400).json({ success: false, message: 'رصيد غير كافٍ أو مبلغ غير صالح' });
+        }
 
-        const withdrawReq = new Withdraw({ id: Date.now(), userEmail: email, userName: user.name, amount, method, address });
+        const withdrawReq = new Withdraw({ id: Date.now(), userEmail: email, userName: user.name, amount: parsedAmount, method, address });
         await withdrawReq.save();
         res.json({ success: true, message: 'تم إرسال طلب السحب' });
     } catch (err) {
@@ -175,7 +180,7 @@ app.post('/api/admin/action', async (req, res) => {
                 await KYC.deleteOne({ id });
             }
         }
-        res.json({ success: true });
+        res.json({ success: status = true });
     } catch (err) {
         res.status(500).json({ success: false });
     }
