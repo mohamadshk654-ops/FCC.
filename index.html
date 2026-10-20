@@ -662,7 +662,7 @@
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC WITH REPOSITORIES STORAGE -->
+    <!-- JAVASCRIPT LOGIC WITH FULL PERSISTENT USERS DATABASE -->
     <script>
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
@@ -687,7 +687,29 @@
 
         let logs = [];
 
-        // Global Shared Data Stores via LocalStorage
+        // Database storage helpers
+        function getUsersDB() {
+            return JSON.parse(localStorage.getItem('fcc_users_db') || '{}');
+        }
+
+        function saveUsersDB(db) {
+            localStorage.setItem('fcc_users_db', JSON.stringify(db));
+        }
+
+        function persistCurrentUserData() {
+            if (!state.currentUser) return;
+            const db = getUsersDB();
+            db[state.currentUser.email] = {
+                name: state.currentUser.name,
+                balance: state.balance,
+                earnings: state.earnings,
+                activeInvestments: state.activeInvestments,
+                lastTaskTime: state.lastTaskTime,
+                kycStatus: state.kycStatus
+            };
+            saveUsersDB(db);
+        }
+
         function loadSharedAdminData() {
             pendingDeposits = JSON.parse(localStorage.getItem('fcc_pending_deposits') || '[]');
             pendingWithdrawals = JSON.parse(localStorage.getItem('fcc_pending_withdrawals') || '[]');
@@ -793,14 +815,33 @@
         }
 
         function completeAuth(email, name, isRestored) {
-            state.currentUser = { email, name };
-            state.isAdmin = (email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+            let db = getUsersDB();
+            if (!db[email]) {
+                db[email] = {
+                    name: name,
+                    balance: 0.00,
+                    earnings: 0.00,
+                    activeInvestments: [],
+                    lastTaskTime: null,
+                    kycStatus: 'unverified'
+                };
+                saveUsersDB(db);
+            }
 
-            localStorage.setItem('fcc_user', JSON.stringify({ email, name }));
+            // Load user data into state
+            state.currentUser = { email, name: db[email].name || name };
+            state.isAdmin = (email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+            state.balance = db[email].balance;
+            state.earnings = db[email].earnings;
+            state.activeInvestments = db[email].activeInvestments || [];
+            state.lastTaskTime = db[email].lastTaskTime || null;
+            state.kycStatus = db[email].kycStatus || 'unverified';
+
+            localStorage.setItem('fcc_user', JSON.stringify({ email, name: state.currentUser.name }));
 
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('userNameDisplay').innerText = name;
+            document.getElementById('userNameDisplay').innerText = state.currentUser.name;
 
             if (!isRestored) {
                 document.getElementById('welcomeModal').classList.remove('hidden');
@@ -1026,6 +1067,7 @@
                     saveSharedAdminData();
 
                     state.kycStatus = 'pending';
+                    persistCurrentUserData();
 
                     logs.unshift({
                         id: Date.now(),
@@ -1123,15 +1165,25 @@
             loadSharedAdminData();
             const req = pendingDeposits.find(d => d.id === id);
             if (req) {
+                // Update target user's DB record
+                const db = getUsersDB();
+                if (db[req.userEmail]) {
+                    db[req.userEmail].balance += req.amount;
+                    saveUsersDB(db);
+                }
+
+                // If currently logged in user is the owner of the request, update active state
                 if (state.currentUser && state.currentUser.email === req.userEmail) {
                     state.balance += req.amount;
+                    persistCurrentUserData();
+                    updateUI();
                 }
+
                 pendingDeposits = pendingDeposits.filter(d => d.id !== id);
                 saveSharedAdminData();
 
                 renderAdminDashboard();
-                updateUI();
-                alert(`تم قبول الشحن وإضافة $${req.amount} بنجاح.`);
+                alert(`تم قبول الشحن وإضافة $${req.amount} بنجاح لحساب المستخدم.`);
             }
         }
 
@@ -1146,14 +1198,22 @@
             loadSharedAdminData();
             const req = pendingWithdrawals.find(w => w.id === id);
             if (req) {
+                const db = getUsersDB();
+                if (db[req.userEmail]) {
+                    db[req.userEmail].balance -= req.amount;
+                    saveUsersDB(db);
+                }
+
                 if (state.currentUser && state.currentUser.email === req.userEmail) {
                     state.balance -= req.amount;
+                    persistCurrentUserData();
+                    updateUI();
                 }
+
                 pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
                 saveSharedAdminData();
 
                 renderAdminDashboard();
-                updateUI();
                 alert(`تم تأكيد السحب وخصم $${req.amount} بنجاح.`);
             }
         }
@@ -1169,23 +1229,46 @@
             loadSharedAdminData();
             const req = pendingKYCs.find(k => k.id === id);
             if (req) {
+                const db = getUsersDB();
+                if (db[req.userEmail]) {
+                    db[req.userEmail].kycStatus = 'verified';
+                    saveUsersDB(db);
+                }
+
                 if (state.currentUser && state.currentUser.email === req.userEmail) {
                     state.kycStatus = 'verified';
+                    persistCurrentUserData();
+                    updateUI();
                 }
+
                 pendingKYCs = pendingKYCs.filter(k => k.id !== id);
                 saveSharedAdminData();
 
                 renderAdminDashboard();
-                updateUI();
                 alert('تم قبول توثيق حساب المستثمر بنجاح.');
             }
         }
 
         function rejectKYC(id) {
             loadSharedAdminData();
-            pendingKYCs = pendingKYCs.filter(k => k.id !== id);
-            saveSharedAdminData();
-            renderAdminDashboard();
+            const req = pendingKYCs.find(k => k.id === id);
+            if (req) {
+                const db = getUsersDB();
+                if (db[req.userEmail]) {
+                    db[req.userEmail].kycStatus = 'unverified';
+                    saveUsersDB(db);
+                }
+
+                if (state.currentUser && state.currentUser.email === req.userEmail) {
+                    state.kycStatus = 'unverified';
+                    persistCurrentUserData();
+                    updateUI();
+                }
+
+                pendingKYCs = pendingKYCs.filter(k => k.id !== id);
+                saveSharedAdminData();
+                renderAdminDashboard();
+            }
         }
 
         function investInPackage(pkgId) {
@@ -1201,6 +1284,8 @@
                 ...pkg,
                 dailyProfitAmount: (pkg.price * (pkg.rate / 100))
             });
+
+            persistCurrentUserData();
 
             logs.unshift({
                 id: Date.now(),
@@ -1235,6 +1320,8 @@
             state.earnings += profit;
             state.balance += profit;
             state.lastTaskTime = now;
+
+            persistCurrentUserData();
 
             logs.unshift({
                 id: Date.now(),
