@@ -169,38 +169,6 @@
                 </p>
             </div>
 
-            <div class="space-y-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-fire text-amber-400"></i> الباقات الاستثمارية المتوفرة حالياً (120 يوماً):
-                </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">الباقة الأساسية</div>
-                        <div class="text-slate-300 mt-1">$15 | ربح 4%</div>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">الباقة البرونزية</div>
-                        <div class="text-slate-300 mt-1">$45 | ربح 6%</div>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">الباقة الفضية</div>
-                        <div class="text-slate-300 mt-1">$90 | ربح 9%</div>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">الباقة الذهبية</div>
-                        <div class="text-slate-300 mt-1">$150 | ربح 12%</div>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">الباقة الماسية</div>
-                        <div class="text-slate-300 mt-1">$220 | ربح 15%</div>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div class="font-bold text-amber-400">باقة VIP</div>
-                        <div class="text-slate-300 mt-1">$300 | ربح 18%</div>
-                    </div>
-                </div>
-            </div>
-
             <button onclick="closeWelcomeModal()" class="w-full py-3.5 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20">
                 بدء الاستثمار الآن
             </button>
@@ -319,6 +287,9 @@
                             </h2>
                             <p class="text-xs text-purple-300 mt-1">حساب الأدمن الرئيسي (<span class="font-mono">nnnnaaatttnanooo@gmail.com</span>)</p>
                         </div>
+                        <button onclick="loadAdminData()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl">
+                            <i class="fa-solid fa-rotate ml-1"></i> تحديث الطلبات
+                        </button>
                     </div>
 
                     <div class="space-y-4">
@@ -662,7 +633,7 @@
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC WITH FULL PERSISTENT USERS DATABASE -->
+    <!-- CLIENT JAVASCRIPT CONNECTED TO BACKEND API -->
     <script>
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
@@ -682,65 +653,34 @@
             earnings: 0.00,
             activeInvestments: [],
             lastTaskTime: null,
-            kycStatus: 'unverified'
+            kycStatus: 'unverified',
+            refCode: '',
+            teamCount: 0,
+            teamEarnings: 0.00
         };
 
         let logs = [];
-
-        // Database storage helpers
-        function getUsersDB() {
-            return JSON.parse(localStorage.getItem('fcc_users_db') || '{}');
-        }
-
-        function saveUsersDB(db) {
-            localStorage.setItem('fcc_users_db', JSON.stringify(db));
-        }
-
-        function persistCurrentUserData() {
-            if (!state.currentUser) return;
-            const db = getUsersDB();
-            db[state.currentUser.email] = {
-                name: state.currentUser.name,
-                balance: state.balance,
-                earnings: state.earnings,
-                activeInvestments: state.activeInvestments,
-                lastTaskTime: state.lastTaskTime,
-                kycStatus: state.kycStatus
-            };
-            saveUsersDB(db);
-        }
-
-        function loadSharedAdminData() {
-            pendingDeposits = JSON.parse(localStorage.getItem('fcc_pending_deposits') || '[]');
-            pendingWithdrawals = JSON.parse(localStorage.getItem('fcc_pending_withdrawals') || '[]');
-            pendingKYCs = JSON.parse(localStorage.getItem('fcc_pending_kycs') || '[]');
-        }
-
-        function saveSharedAdminData() {
-            localStorage.setItem('fcc_pending_deposits', JSON.stringify(pendingDeposits));
-            localStorage.setItem('fcc_pending_withdrawals', JSON.stringify(pendingWithdrawals));
-            localStorage.setItem('fcc_pending_kycs', JSON.stringify(pendingKYCs));
-        }
-
-        let pendingDeposits = [];
-        let pendingWithdrawals = [];
-        let pendingKYCs = [];
-
         let currentSelectedDepositMethod = 'trc20';
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadSharedAdminData();
             renderPackages();
             setInterval(updateTaskTimerUI, 1000);
             checkUrlRefCode();
             restoreSession();
         });
 
-        function restoreSession() {
-            const savedUser = localStorage.getItem('fcc_user');
+        async function restoreSession() {
+            const savedUser = localStorage.getItem('fcc_user_email');
             if (savedUser) {
-                const userObj = JSON.parse(savedUser);
-                completeAuth(userObj.email, userObj.name, true);
+                try {
+                    const res = await fetch(`/api/user/${savedUser}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        setUserData(data.user, true);
+                    }
+                } catch (e) {
+                    console.error("فشل الاتصال بالخادم", e);
+                }
             }
         }
 
@@ -793,66 +733,88 @@
             }
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
-            completeAuth(email, email.split('@')[0], false);
+            const password = document.getElementById('loginPass').value.trim();
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setUserData(data.user, false);
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert("حدث خطأ في الاتصال بالخادم.");
+            }
         }
 
-        function handleRegister(e) {
+        async function handleRegister(e) {
             e.preventDefault();
-            const pass = document.getElementById('regPass').value;
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPass').value;
             const confirmPass = document.getElementById('regPassConfirm').value;
+            const refCode = document.getElementById('regRefCode').value.trim();
 
-            if (pass !== confirmPass) {
-                alert("كلمات المرور غير متطابقة! يرجى التأكد وإعادة المحاولة.");
+            if (password !== confirmPass) {
+                alert("كلمات المرور غير متطابقة!");
                 return;
             }
 
-            const email = document.getElementById('regEmail').value.trim();
-            const name = document.getElementById('regName').value.trim();
-            completeAuth(email, name, false);
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, refCode })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setUserData(data.user, false);
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert("حدث خطأ أثناء التسجيل.");
+            }
         }
 
-        function completeAuth(email, name, isRestored) {
-            let db = getUsersDB();
-            if (!db[email]) {
-                db[email] = {
-                    name: name,
-                    balance: 0.00,
-                    earnings: 0.00,
-                    activeInvestments: [],
-                    lastTaskTime: null,
-                    kycStatus: 'unverified'
-                };
-                saveUsersDB(db);
-            }
+        function setUserData(user, isRestored) {
+            state.currentUser = { email: user.email, name: user.name };
+            state.isAdmin = (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+            state.balance = user.balance;
+            state.earnings = user.earnings;
+            state.activeInvestments = user.activeInvestments || [];
+            state.lastTaskTime = user.lastTaskTime || null;
+            state.kycStatus = user.kycStatus || 'unverified';
+            state.refCode = user.refCode || 'FCC-0000';
+            state.teamCount = user.teamCount || 0;
+            state.teamEarnings = user.teamEarnings || 0.00;
 
-            // Load user data into state
-            state.currentUser = { email, name: db[email].name || name };
-            state.isAdmin = (email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-            state.balance = db[email].balance;
-            state.earnings = db[email].earnings;
-            state.activeInvestments = db[email].activeInvestments || [];
-            state.lastTaskTime = db[email].lastTaskTime || null;
-            state.kycStatus = db[email].kycStatus || 'unverified';
-
-            localStorage.setItem('fcc_user', JSON.stringify({ email, name: state.currentUser.name }));
+            localStorage.setItem('fcc_user_email', user.email);
 
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('userNameDisplay').innerText = state.currentUser.name;
+            document.getElementById('userNameDisplay').innerText = user.name;
+            document.getElementById('refCodeDisplay').innerText = state.refCode;
+            document.getElementById('refLinkDisplay').innerText = `${window.location.origin}${window.location.pathname}?ref=${state.refCode}`;
+            document.getElementById('teamMembersCount').innerText = state.teamCount;
+            document.getElementById('teamEarningsDisplay').innerText = `$${state.teamEarnings.toFixed(2)}`;
 
             if (!isRestored) {
                 document.getElementById('welcomeModal').classList.remove('hidden');
             }
 
-            loadSharedAdminData();
-
             if (state.isAdmin) {
                 document.getElementById('adminBadge').classList.remove('hidden');
                 document.getElementById('nav-btn-admin').classList.remove('hidden');
-                renderAdminDashboard();
+                loadAdminData();
                 switchTab('admin');
             } else {
                 document.getElementById('adminBadge').classList.add('hidden');
@@ -864,7 +826,7 @@
         }
 
         function logout() {
-            localStorage.removeItem('fcc_user');
+            localStorage.removeItem('fcc_user_email');
             state.currentUser = null;
             state.isAdmin = false;
             document.getElementById('appContainer').classList.add('hidden');
@@ -891,7 +853,7 @@
             }
 
             if (tabId === 'admin' && state.isAdmin) {
-                renderAdminDashboard();
+                loadAdminData();
             }
         }
 
@@ -954,52 +916,50 @@
         }
 
         function copyWalletAddress() {
-            const walletText = document.getElementById('depositWalletAddress').innerText;
-            navigator.clipboard.writeText(walletText);
+            navigator.clipboard.writeText(document.getElementById('depositWalletAddress').innerText);
             alert("تم نسخ العنوان بنجاح!");
         }
 
         function copyRefCode() {
-            navigator.clipboard.writeText("FCC-8899");
+            navigator.clipboard.writeText(state.refCode);
             alert("تم نسخ كود الدعوة بنجاح!");
         }
 
         function copyRefLink() {
-            const fullLink = `${window.location.origin}${window.location.pathname}?ref=FCC-8899`;
-            navigator.clipboard.writeText(fullLink);
+            navigator.clipboard.writeText(document.getElementById('refLinkDisplay').innerText);
             alert("تم نسخ رابط الدعوة الخاص بك بنجاح!");
         }
 
-        function handleDepositSubmit(e) {
+        async function handleDepositSubmit(e) {
             e.preventDefault();
             const amount = parseFloat(document.getElementById('depositAmount').value);
 
-            loadSharedAdminData();
-            pendingDeposits.push({
-                id: Date.now(),
-                userEmail: state.currentUser.email,
-                userName: state.currentUser.name,
-                amount: amount,
-                method: currentSelectedDepositMethod.toUpperCase()
-            });
-            saveSharedAdminData();
-
-            logs.unshift({
-                id: Date.now(),
-                type: 'طلب إيداع',
-                title: `طلب شحن عبر ${currentSelectedDepositMethod.toUpperCase()}`,
-                amount: `+$${amount.toFixed(2)}`,
-                date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة لدى الشركة'
-            });
-
-            document.getElementById('depositAmount').value = '';
-
-            alert('تم إرسال طلب الشحن بنجاح للشركة للموافقة والإضافة.');
-            switchTab('dashboard');
+            try {
+                const res = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: state.currentUser.email, amount, method: currentSelectedDepositMethod.toUpperCase() })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    logs.unshift({
+                        id: Date.now(),
+                        type: 'طلب إيداع',
+                        title: `طلب شحن عبر ${currentSelectedDepositMethod.toUpperCase()}`,
+                        amount: `+$${amount.toFixed(2)}`,
+                        date: new Date().toLocaleTimeString(),
+                        status: 'قيد المراجعة لدى الشركة'
+                    });
+                    document.getElementById('depositAmount').value = '';
+                    alert('تم إرسال طلب الشحن بنجاح للشركة للموافقة والإضافة.');
+                    switchTab('dashboard');
+                }
+            } catch (err) {
+                alert("حدث خطأ أثناء إرسال طلب الإيداع.");
+            }
         }
 
-        function handleWithdrawSubmit(e) {
+        async function handleWithdrawSubmit(e) {
             e.preventDefault();
             const amount = parseFloat(document.getElementById('withdrawAmount').value);
             const method = document.getElementById('withdrawMethod').value;
@@ -1010,34 +970,35 @@
                 return;
             }
 
-            loadSharedAdminData();
-            pendingWithdrawals.push({
-                id: Date.now(),
-                userEmail: state.currentUser.email,
-                userName: state.currentUser.name,
-                amount: amount,
-                method: method,
-                address: address
-            });
-            saveSharedAdminData();
-
-            logs.unshift({
-                id: Date.now(),
-                type: 'طلب سحب',
-                title: `طلب سحب إلى ${method}`,
-                amount: `-$${amount.toFixed(2)}`,
-                date: new Date().toLocaleTimeString(),
-                status: 'قيد المراجعة لدى الشركة'
-            });
-
-            document.getElementById('withdrawAmount').value = '';
-            document.getElementById('withdrawAddress').value = '';
-
-            alert('تم إرسال طلب السحب للشركة لمعالجته وقبوله.');
-            switchTab('dashboard');
+            try {
+                const res = await fetch('/api/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: state.currentUser.email, amount, method, address })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    logs.unshift({
+                        id: Date.now(),
+                        type: 'طلب سحب',
+                        title: `طلب سحب إلى ${method}`,
+                        amount: `-$${amount.toFixed(2)}`,
+                        date: new Date().toLocaleTimeString(),
+                        status: 'قيد المراجعة لدى الشركة'
+                    });
+                    document.getElementById('withdrawAmount').value = '';
+                    document.getElementById('withdrawAddress').value = '';
+                    alert('تم إرسال طلب السحب للشركة للمعالجة وقبوله.');
+                    switchTab('dashboard');
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert("حدث خطأ أثناء إرسال طلب السحب.");
+            }
         }
 
-        function handleKYCSubmit(e) {
+        async function handleKYCSubmit(e) {
             e.preventDefault();
             const country = document.getElementById('kycCountry').value;
             const fullName = document.getElementById('kycFullName').value;
@@ -1049,74 +1010,78 @@
             const readerBack = new FileReader();
 
             readerFront.onload = function(eventFront) {
-                const frontBase64 = eventFront.target.result;
-                
-                readerBack.onload = function(eventBack) {
-                    const backBase64 = eventBack.target.result;
-
-                    loadSharedAdminData();
-                    pendingKYCs.push({
-                        id: Date.now(),
-                        userEmail: state.currentUser.email,
-                        fullName: fullName,
-                        country: country,
-                        docType: docType,
-                        frontImg: frontBase64,
-                        backImg: backBase64
-                    });
-                    saveSharedAdminData();
-
-                    state.kycStatus = 'pending';
-                    persistCurrentUserData();
-
-                    logs.unshift({
-                        id: Date.now(),
-                        type: 'توثيق الهوية',
-                        title: `تقديم مستندات KYC (${country})`,
-                        amount: '-',
-                        date: new Date().toLocaleTimeString(),
-                        status: 'قيد المراجعة لدى الشركة'
-                    });
-
-                    closeKycModal();
-                    updateUI();
-                    alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
+                readerBack.onload = async function(eventBack) {
+                    try {
+                        const res = await fetch('/api/kyc', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: state.currentUser.email,
+                                fullName,
+                                country,
+                                docType,
+                                frontImg: eventFront.target.result,
+                                backImg: eventBack.target.result
+                            })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            state.kycStatus = 'pending';
+                            logs.unshift({
+                                id: Date.now(),
+                                type: 'توثيق الهوية',
+                                title: `تقديم مستندات KYC (${country})`,
+                                amount: '-',
+                                date: new Date().toLocaleTimeString(),
+                                status: 'قيد المراجعة لدى الشركة'
+                            });
+                            closeKycModal();
+                            updateUI();
+                            alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
+                        }
+                    } catch (err) {
+                        alert("حدث خطأ أثناء رفع مستندات التوثيق.");
+                    }
                 }
                 readerBack.readAsDataURL(backFile);
             }
             readerFront.readAsDataURL(frontFile);
         }
 
-        function renderAdminDashboard() {
+        async function loadAdminData() {
             if (!state.isAdmin) return;
+            try {
+                const res = await fetch('/api/admin/data');
+                const data = await res.json();
+                if (data.success) {
+                    renderAdminLists(data.deposits, data.withdrawals, data.kycs);
+                }
+            } catch (e) {
+                console.error("فشل جلب بيانات الأدمن");
+            }
+        }
 
-            loadSharedAdminData();
-
+        function renderAdminLists(deposits, withdrawals, kycs) {
             const depList = document.getElementById('adminDepositRequests');
             const withList = document.getElementById('adminWithdrawRequests');
             const kycList = document.getElementById('adminKYCRequests');
 
-            if (pendingDeposits.length === 0) {
-                depList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات إيداع معلقة حالياً.</div>`;
-            } else {
-                depList.innerHTML = pendingDeposits.map(d => `
+            depList.innerHTML = deposits.length === 0 ? `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات إيداع معلقة حالياً.</div>` :
+                deposits.map(d => `
                     <div class="flex flex-wrap items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 gap-3">
                         <div>
                             <div class="text-sm font-bold text-white">${d.userName} (${d.userEmail})</div>
                             <div class="text-xs text-slate-400">المبلغ: <span class="text-emerald-400 font-bold">$${d.amount}</span> | الشبكة: <span class="text-amber-400 font-bold">${d.method}</span></div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="approveDeposit(${d.id})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl">قبول وشحن</button>
-                            <button onclick="rejectDeposit(${d.id})" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">رفض</button>
+                            <button onclick="adminAction('deposit', ${d.id}, 'approve')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl">قبول وشحن</button>
+                            <button onclick="adminAction('deposit', ${d.id}, 'reject')" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">رفض</button>
                         </div>
                     </div>
                 `).join('');
-            }
 
-            if (pendingWithdrawals.length === 0) {
-                withList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات سحب معلقة حالياً.</div>`;
-            } else {
-                withList.innerHTML = pendingWithdrawals.map(w => `
+            withList.innerHTML = withdrawals.length === 0 ? `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات سحب معلقة حالياً.</div>` :
+                withdrawals.map(w => `
                     <div class="flex flex-wrap items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 gap-3">
                         <div>
                             <div class="text-sm font-bold text-white">${w.userName} (${w.userEmail})</div>
@@ -1124,17 +1089,14 @@
                             <div class="text-xs font-mono text-emerald-400 mt-1">عنوان المحفظة: ${w.address}</div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="approveWithdrawal(${w.id})" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">موافقة وصرف</button>
-                            <button onclick="rejectWithdrawal(${w.id})" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded-xl">إلغاء</button>
+                            <button onclick="adminAction('withdraw', ${w.id}, 'approve')" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">موافقة وصرف</button>
+                            <button onclick="adminAction('withdraw', ${w.id}, 'reject')" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded-xl">إلغاء</button>
                         </div>
                     </div>
                 `).join('');
-            }
 
-            if (pendingKYCs.length === 0) {
-                kycList.innerHTML = `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات توثيق معلقة حالياً.</div>`;
-            } else {
-                kycList.innerHTML = pendingKYCs.map(k => `
+            kycList.innerHTML = kycs.length === 0 ? `<div class="text-slate-500 text-xs py-2 text-center">لا توجد طلبات توثيق معلقة حالياً.</div>` :
+                kycs.map(k => `
                     <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
                         <div class="flex justify-between items-center">
                             <div>
@@ -1142,132 +1104,40 @@
                                 <div class="text-xs text-slate-400">الدولة: ${k.country} | نوع الوثيقة: ${k.docType}</div>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="approveKYC(${k.id})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl">قبول التوثيق</button>
-                                <button onclick="rejectKYC(${k.id})" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">رفض</button>
+                                <button onclick="adminAction('kyc', ${k.id}, 'approve')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl">قبول التوثيق</button>
+                                <button onclick="adminAction('kyc', ${k.id}, 'reject')" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl">رفض</button>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 pt-2">
                             <a href="${k.frontImg}" target="_blank" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500">
                                 <img src="${k.frontImg}" class="max-h-28 mx-auto rounded-lg object-cover mb-1" alt="Front ID">
-                                <span class="text-[10px] text-amber-400 font-bold">الوجه الأمامي (تكبير)</span>
+                                <span class="text-[10px] text-amber-400 font-bold">الوجه الأمامي</span>
                             </a>
                             <a href="${k.backImg}" target="_blank" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500">
                                 <img src="${k.backImg}" class="max-h-28 mx-auto rounded-lg object-cover mb-1" alt="Back ID">
-                                <span class="text-[10px] text-amber-400 font-bold">الوجه الخلفي (تكبير)</span>
+                                <span class="text-[10px] text-amber-400 font-bold">الوجه الخلفي</span>
                             </a>
                         </div>
                     </div>
                 `).join('');
-            }
         }
 
-        function approveDeposit(id) {
-            loadSharedAdminData();
-            const req = pendingDeposits.find(d => d.id === id);
-            if (req) {
-                // Update target user's DB record
-                const db = getUsersDB();
-                if (db[req.userEmail]) {
-                    db[req.userEmail].balance += req.amount;
-                    saveUsersDB(db);
+        async function adminAction(type, id, action) {
+            try {
+                const res = await fetch('/api/admin/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, id, action })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    loadAdminData();
+                    alert("تم تنفيذ الإجراء بنجاح.");
+                    // تحديث بيانات المستخدم الحالي إذا كان هو صاحب الطلب
+                    restoreSession();
                 }
-
-                // If currently logged in user is the owner of the request, update active state
-                if (state.currentUser && state.currentUser.email === req.userEmail) {
-                    state.balance += req.amount;
-                    persistCurrentUserData();
-                    updateUI();
-                }
-
-                pendingDeposits = pendingDeposits.filter(d => d.id !== id);
-                saveSharedAdminData();
-
-                renderAdminDashboard();
-                alert(`تم قبول الشحن وإضافة $${req.amount} بنجاح لحساب المستخدم.`);
-            }
-        }
-
-        function rejectDeposit(id) {
-            loadSharedAdminData();
-            pendingDeposits = pendingDeposits.filter(d => d.id !== id);
-            saveSharedAdminData();
-            renderAdminDashboard();
-        }
-
-        function approveWithdrawal(id) {
-            loadSharedAdminData();
-            const req = pendingWithdrawals.find(w => w.id === id);
-            if (req) {
-                const db = getUsersDB();
-                if (db[req.userEmail]) {
-                    db[req.userEmail].balance -= req.amount;
-                    saveUsersDB(db);
-                }
-
-                if (state.currentUser && state.currentUser.email === req.userEmail) {
-                    state.balance -= req.amount;
-                    persistCurrentUserData();
-                    updateUI();
-                }
-
-                pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
-                saveSharedAdminData();
-
-                renderAdminDashboard();
-                alert(`تم تأكيد السحب وخصم $${req.amount} بنجاح.`);
-            }
-        }
-
-        function rejectWithdrawal(id) {
-            loadSharedAdminData();
-            pendingWithdrawals = pendingWithdrawals.filter(w => w.id !== id);
-            saveSharedAdminData();
-            renderAdminDashboard();
-        }
-
-        function approveKYC(id) {
-            loadSharedAdminData();
-            const req = pendingKYCs.find(k => k.id === id);
-            if (req) {
-                const db = getUsersDB();
-                if (db[req.userEmail]) {
-                    db[req.userEmail].kycStatus = 'verified';
-                    saveUsersDB(db);
-                }
-
-                if (state.currentUser && state.currentUser.email === req.userEmail) {
-                    state.kycStatus = 'verified';
-                    persistCurrentUserData();
-                    updateUI();
-                }
-
-                pendingKYCs = pendingKYCs.filter(k => k.id !== id);
-                saveSharedAdminData();
-
-                renderAdminDashboard();
-                alert('تم قبول توثيق حساب المستثمر بنجاح.');
-            }
-        }
-
-        function rejectKYC(id) {
-            loadSharedAdminData();
-            const req = pendingKYCs.find(k => k.id === id);
-            if (req) {
-                const db = getUsersDB();
-                if (db[req.userEmail]) {
-                    db[req.userEmail].kycStatus = 'unverified';
-                    saveUsersDB(db);
-                }
-
-                if (state.currentUser && state.currentUser.email === req.userEmail) {
-                    state.kycStatus = 'unverified';
-                    persistCurrentUserData();
-                    updateUI();
-                }
-
-                pendingKYCs = pendingKYCs.filter(k => k.id !== id);
-                saveSharedAdminData();
-                renderAdminDashboard();
+            } catch (e) {
+                alert("حدث خطأ أثناء معالجة الطلب.");
             }
         }
 
@@ -1284,8 +1154,6 @@
                 ...pkg,
                 dailyProfitAmount: (pkg.price * (pkg.rate / 100))
             });
-
-            persistCurrentUserData();
 
             logs.unshift({
                 id: Date.now(),
@@ -1320,8 +1188,6 @@
             state.earnings += profit;
             state.balance += profit;
             state.lastTaskTime = now;
-
-            persistCurrentUserData();
 
             logs.unshift({
                 id: Date.now(),
@@ -1373,10 +1239,8 @@
 
         function renderLogsUI() {
             const container = document.getElementById('logsListContainer');
-            if (logs.length === 0) {
-                container.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">لا توجد عمليات مسجلة حتى الآن.</div>`;
-            } else {
-                container.innerHTML = logs.map(l => `
+            container.innerHTML = logs.length === 0 ? `<div class="text-center text-slate-500 py-8 text-xs">لا توجد عمليات مسجلة حتى الآن.</div>` :
+                logs.map(l => `
                     <div class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
@@ -1388,7 +1252,6 @@
                         <div class="font-mono font-extrabold text-sm ${l.amount.startsWith('+') ? 'text-emerald-400' : l.amount.startsWith('-') ? 'text-rose-400' : 'text-slate-400'}">${l.amount}</div>
                     </div>
                 `).join('');
-            }
         }
 
         function updateUI() {
@@ -1415,16 +1278,13 @@
                 }
 
                 const profPkgList = document.getElementById('profilePackagesList');
-                if (state.activeInvestments.length === 0) {
-                    profPkgList.innerHTML = `<div class="text-xs text-slate-500">لا توجد باقات مفعلة.</div>`;
-                } else {
-                    profPkgList.innerHTML = state.activeInvestments.map(inv => `
+                profPkgList.innerHTML = state.activeInvestments.length === 0 ? `<div class="text-xs text-slate-500">لا توجد باقات مفعلة.</div>` :
+                    state.activeInvestments.map(inv => `
                         <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-xs">
                             <span class="font-bold text-white">${inv.name} ($${inv.price})</span>
                             <span class="text-emerald-400 font-bold">ربح يومي ${inv.rate}% (120 يوم)</span>
                         </div>
                     `).join('');
-                }
             }
 
             const kycBadge = document.getElementById('kycNavBadge');
@@ -1441,10 +1301,8 @@
             }
 
             const listEl = document.getElementById('activePackagesList');
-            if (state.activeInvestments.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-10 text-slate-500 text-sm">لا توجد باقات نشطة حالياً. شحن الرصيد أولاً ثم اختر باقتك المفضلة للبدء.</div>`;
-            } else {
-                listEl.innerHTML = state.activeInvestments.map(inv => `
+            listEl.innerHTML = state.activeInvestments.length === 0 ? `<div class="text-center py-10 text-slate-500 text-sm">لا توجد باقات نشطة حالياً. شحن الرصيد أولاً ثم اختر باقتك المفضلة للبدء.</div>` :
+                state.activeInvestments.map(inv => `
                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-900/60 border border-slate-800">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
@@ -1460,7 +1318,6 @@
                         </span>
                     </div>
                 `).join('');
-            }
         }
     </script>
 </body>
