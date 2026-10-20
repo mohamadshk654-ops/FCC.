@@ -86,6 +86,57 @@ app.get('/api/user/:email', async (req, res) => {
     }
 });
 
+// مسار شراء الباقة / الاستثمار وحفظها في قاعدة البيانات
+app.post('/api/invest', async (req, res) => {
+    try {
+        const { email, planName, price, dailyProfit, duration } = req.body;
+        const user = await User.findOne({ email });
+        const parsedPrice = parseFloat(price);
+
+        if (!user || isNaN(parsedPrice) || parsedPrice <= 0 || user.balance < parsedPrice) {
+            return res.status(400).json({ success: false, message: 'رصيد غير كافٍ أو مبلغ غير صالح' });
+        }
+
+        user.balance -= parsedPrice;
+        const investment = {
+            id: Date.now(),
+            planName,
+            price: parsedPrice,
+            dailyProfit,
+            duration,
+            date: new Date()
+        };
+        user.activeInvestments.push(investment);
+        await user.save();
+
+        res.json({ success: true, message: 'تم تفعيل الباقة بنجاح', user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+    }
+});
+
+// مسار إنجاز المهام وتحديث الأرباح والرصيد في قاعدة البيانات
+app.post('/api/task', async (req, res) => {
+    try {
+        const { email, reward } = req.body;
+        const user = await User.findOne({ email });
+        const parsedReward = parseFloat(reward);
+
+        if (!user || isNaN(parsedReward) || parsedReward <= 0) {
+            return res.status(400).json({ success: false, message: 'بيانات غير صالحة' });
+        }
+
+        user.balance += parsedReward;
+        user.earnings += parsedReward;
+        user.lastTaskTime = Date.now();
+        await user.save();
+
+        res.json({ success: true, message: 'تم إضافة الأرباح بنجاح', user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+    }
+});
+
 app.post('/api/deposit', async (req, res) => {
     try {
         const { email, amount, method } = req.body;
@@ -180,7 +231,7 @@ app.post('/api/admin/action', async (req, res) => {
                 await KYC.deleteOne({ id });
             }
         }
-        res.json({ success: status = true });
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false });
     }
