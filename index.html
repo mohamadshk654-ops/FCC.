@@ -497,7 +497,7 @@
                     <form onsubmit="handleWithdrawSubmit(event)" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1.5">المبلغ المراد سحبه ($ USD)</label>
-                            <input type="number" id="withdrawAmount" min="1" step="0.1" required placeholder="الحد الأدنى للسحب $1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            <input type="number" id="withdrawAmount" min="1" step="0.01" required placeholder="الحد الأدنى للسحب $1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1.5">شبكة وطريقة السحب</label>
@@ -635,6 +635,7 @@
 
     <!-- CLIENT JAVASCRIPT CONNECTED TO BACKEND API -->
     <script>
+        const API_URL = "https://fcc-uqhu.onrender.com";
         const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
 
         const packagesData = [
@@ -673,7 +674,7 @@
             const savedUser = localStorage.getItem('fcc_user_email');
             if (savedUser) {
                 try {
-                    const res = await fetch(`/api/user/${savedUser}`);
+                    const res = await fetch(`${API_URL}/api/user/${savedUser}`);
                     const data = await res.json();
                     if (data.success) {
                         setUserData(data.user, true);
@@ -739,7 +740,7 @@
             const password = document.getElementById('loginPass').value.trim();
 
             try {
-                const res = await fetch('/api/login', {
+                const res = await fetch(`${API_URL}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -769,7 +770,7 @@
             }
 
             try {
-                const res = await fetch('/api/register', {
+                const res = await fetch(`${API_URL}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, password, refCode })
@@ -935,7 +936,7 @@
             const amount = parseFloat(document.getElementById('depositAmount').value);
 
             try {
-                const res = await fetch('/api/deposit', {
+                const res = await fetch(`${API_URL}/api/deposit`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: state.currentUser.email, amount, method: currentSelectedDepositMethod.toUpperCase() })
@@ -971,7 +972,7 @@
             }
 
             try {
-                const res = await fetch('/api/withdraw', {
+                const res = await fetch(`${API_URL}/api/withdraw`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: state.currentUser.email, amount, method, address })
@@ -1012,7 +1013,7 @@
             readerFront.onload = function(eventFront) {
                 readerBack.onload = async function(eventBack) {
                     try {
-                        const res = await fetch('/api/kyc', {
+                        const res = await fetch(`${API_URL}/api/kyc`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -1051,7 +1052,7 @@
         async function loadAdminData() {
             if (!state.isAdmin) return;
             try {
-                const res = await fetch('/api/admin/data');
+                const res = await fetch(`${API_URL}/api/admin/data`);
                 const data = await res.json();
                 if (data.success) {
                     renderAdminLists(data.deposits, data.withdrawals, data.kycs);
@@ -1124,7 +1125,7 @@
 
         async function adminAction(type, id, action) {
             try {
-                const res = await fetch('/api/admin/action', {
+                const res = await fetch(`${API_URL}/api/admin/action`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type, id, action })
@@ -1133,7 +1134,6 @@
                 if (data.success) {
                     loadAdminData();
                     alert("تم تنفيذ الإجراء بنجاح.");
-                    // تحديث بيانات المستخدم الحالي إذا كان هو صاحب الطلب
                     restoreSession();
                 }
             } catch (e) {
@@ -1141,7 +1141,7 @@
             }
         }
 
-        function investInPackage(pkgId) {
+        async function investInPackage(pkgId) {
             const pkg = packagesData.find(p => p.id === pkgId);
             if (state.balance < pkg.price) {
                 alert(`رصيدك الحالي ($${state.balance.toFixed(2)}) غير كافٍ للاشتراك. اشحن رصيدك أولاً.`);
@@ -1149,27 +1149,46 @@
                 return;
             }
 
-            state.balance -= pkg.price;
-            state.activeInvestments.push({
-                ...pkg,
-                dailyProfitAmount: (pkg.price * (pkg.rate / 100))
-            });
+            const dailyProfitAmount = pkg.price * (pkg.rate / 100);
 
-            logs.unshift({
-                id: Date.now(),
-                type: 'اشتراك باقة',
-                title: `الاشتراك بـ ${pkg.name}`,
-                amount: `-$${pkg.price.toFixed(2)}`,
-                date: new Date().toLocaleTimeString(),
-                status: 'مكتمل'
-            });
+            try {
+                const res = await fetch(`${API_URL}/api/invest`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: state.currentUser.email,
+                        planName: pkg.name,
+                        price: pkg.price,
+                        dailyProfit: dailyProfitAmount,
+                        duration: pkg.duration
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    state.balance = data.user.balance;
+                    state.activeInvestments = data.user.activeInvestments || [];
+                    
+                    logs.unshift({
+                        id: Date.now(),
+                        type: 'اشتراك باقة',
+                        title: `الاشتراك بـ ${pkg.name}`,
+                        amount: `-$${pkg.price.toFixed(2)}`,
+                        date: new Date().toLocaleTimeString(),
+                        status: 'مكتمل ومحفوظ في القاعدة'
+                    });
 
-            updateUI();
-            alert(`تم الاشتراك بنجاح في ${pkg.name} لمدة 120 يوماً.`);
-            switchTab('dashboard');
+                    updateUI();
+                    alert(`تم الاشتراك بنجاح في ${pkg.name} وحفظها في قاعدة البيانات لمدة 120 يوماً.`);
+                    switchTab('dashboard');
+                } else {
+                    alert(data.message || 'رصيد غير كافٍ أو خطأ في العملية');
+                }
+            } catch (err) {
+                alert("حدث خطأ في الاتصال بالخادم.");
+            }
         }
 
-        function executeDailyTask() {
+        async function executeDailyTask() {
             const now = new Date().getTime();
             if (state.lastTaskTime && (now - state.lastTaskTime < 24 * 60 * 60 * 1000)) {
                 alert("تم تنفيذ المهمة اليومية من قبل! يرجى انتظار انتهاء مؤقت الـ 24 ساعة.");
@@ -1183,23 +1202,42 @@
             }
 
             let profit = 0;
-            state.activeInvestments.forEach(inv => profit += inv.dailyProfitAmount);
-
-            state.earnings += profit;
-            state.balance += profit;
-            state.lastTaskTime = now;
-
-            logs.unshift({
-                id: Date.now(),
-                type: 'المهمة اليومية',
-                title: 'أرباح تفعيل المهمة اليومية',
-                amount: `+$${profit.toFixed(2)}`,
-                date: new Date().toLocaleTimeString(),
-                status: 'مكتمل'
+            state.activeInvestments.forEach(inv => {
+                profit += (inv.dailyProfitAmount !== undefined ? inv.dailyProfitAmount : (inv.price * (inv.rate / 100)));
             });
 
-            updateUI();
-            alert(`تم تحصيل أرباح المهمة بقيمة ($${profit.toFixed(2)}) وإضافتها لرصيدك.`);
+            try {
+                const res = await fetch(`${API_URL}/api/task`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: state.currentUser.email,
+                        reward: profit
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    state.balance = data.user.balance;
+                    state.earnings = data.user.earnings;
+                    state.lastTaskTime = data.user.lastTaskTime;
+
+                    logs.unshift({
+                        id: Date.now(),
+                        type: 'المهمة اليومية',
+                        title: 'أرباح تفعيل المهمة اليومية',
+                        amount: `+$${profit.toFixed(2)}`,
+                        date: new Date().toLocaleTimeString(),
+                        status: 'مكتمل ومحفوظ في القاعدة'
+                    });
+
+                    updateUI();
+                    alert(`تم تحصيل أرباح المهمة بقيمة ($${profit.toFixed(2)}) وحفظها في قاعدة البيانات.`);
+                } else {
+                    alert(data.message || 'حدث خطأ أثناء تنفيذ المهمة.');
+                }
+            } catch (err) {
+                alert("حدث خطأ في الاتصال بالخادم.");
+            }
         }
 
         function updateTaskTimerUI() {
@@ -1281,8 +1319,8 @@
                 profPkgList.innerHTML = state.activeInvestments.length === 0 ? `<div class="text-xs text-slate-500">لا توجد باقات مفعلة.</div>` :
                     state.activeInvestments.map(inv => `
                         <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-xs">
-                            <span class="font-bold text-white">${inv.name} ($${inv.price})</span>
-                            <span class="text-emerald-400 font-bold">ربح يومي ${inv.rate}% (120 يوم)</span>
+                            <span class="font-bold text-white">${inv.name || inv.planName} ($${inv.price})</span>
+                            <span class="text-emerald-400 font-bold">نشطة في قاعدة البيانات</span>
                         </div>
                     `).join('');
             }
@@ -1306,15 +1344,15 @@
                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-900/60 border border-slate-800">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
-                                <i class="fa-solid ${inv.icon}"></i>
+                                <i class="fa-solid fa-box"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-white text-sm">${inv.name}</h4>
-                                <span class="text-xs text-slate-400">ربح يومي: $${inv.dailyProfitAmount.toFixed(2)} (${inv.rate}%)</span>
+                                <h4 class="font-bold text-white text-sm">${inv.name || inv.planName}</h4>
+                                <span class="text-xs text-slate-400">السعر: $${inv.price} | الأرباح: $${inv.dailyProfit || inv.dailyProfitAmount || 0}</span>
                             </div>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            نشطة (120 يوم)
+                            نشطة (محفوظة في MongoDB)
                         </span>
                     </div>
                 `).join('');
