@@ -526,12 +526,12 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-white">صفحة تفعيل المهمة اليومية</h2>
-                        <p class="text-slate-400 text-sm mt-1">انقر الزر مرة واحدة كل 24 ساعة لتحصيل كافة أرباح باقاتك المعتمدة مباشرة إلى محفظتك.</p>
+                        <p id="taskInstructionText" class="text-slate-400 text-sm mt-1">انقر الزر لتفعيل المهمة وتحصيل الأرباح. يبدأ العد التنازلي فور التفعيل وتصبح المهمة غير متاحة حتى انتهائه.</p>
                     </div>
 
                     <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                        <span class="text-xs text-slate-400">الوقت المتبقي للمهمة القادمة</span>
-                        <div id="taskTimer" class="text-3xl font-mono font-bold text-amber-400">جاهز الآن</div>
+                        <span class="text-xs text-slate-400">الوقت المتبقي لتفعيل المهمة القادمة</span>
+                        <div id="taskTimer" class="text-3xl font-mono font-bold text-amber-400">جاهز للتفعيل الآن!</div>
                     </div>
 
                     <button id="claimTaskBtn" onclick="executeDailyTask()" class="w-full py-4 rounded-xl gold-gradient-btn text-slate-950 font-extrabold text-lg shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]">
@@ -1191,7 +1191,7 @@
         async function executeDailyTask() {
             const now = new Date().getTime();
             if (state.lastTaskTime && (now - state.lastTaskTime < 24 * 60 * 60 * 1000)) {
-                alert("تم تنفيذ المهمة اليومية من قبل! يرجى انتظار انتهاء مؤقت الـ 24 ساعة.");
+                alert("تم تنفيذ المهمة اليومية من قبل! المهمة غير متاحة الآن، يرجى انتظار انتهاء العد التنازلي.");
                 return;
             }
 
@@ -1231,7 +1231,7 @@
                     });
 
                     updateUI();
-                    alert(`تم تحصيل أرباح المهمة بقيمة ($${profit.toFixed(2)}) وحفظها في قاعدة البيانات.`);
+                    alert(`تم تفعيل المهمة بنجاح وتحصيل الأرباح بقيمة ($${profit.toFixed(2)}). بدأ العد التنازلي الآن للمهمة القادمة.`);
                 } else {
                     alert(data.message || 'حدث خطأ أثناء تنفيذ المهمة.');
                 }
@@ -1244,13 +1244,16 @@
             const timerEl = document.getElementById('taskTimer');
             const statusEl = document.getElementById('dashTaskStatus');
             const btnEl = document.getElementById('claimTaskBtn');
+            const textEl = document.getElementById('taskInstructionText');
             if (!timerEl || !statusEl || !btnEl) return;
 
             if (!state.lastTaskTime) {
-                timerEl.innerText = "جاهز للتفعيل الآن";
+                timerEl.innerText = "جاهز للتفعيل الآن!";
                 statusEl.innerText = "جاهزة للتفعيل";
                 btnEl.disabled = false;
+                btnEl.innerHTML = `<i class="fa-solid fa-play ml-2"></i> تفعيل المهمة وحساب الربح اليومي`;
                 btnEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                if (textEl) textEl.innerText = "انقر الزر لتفعيل المهمة وتحصيل الأرباح. يبدأ العد التنازلي فور التفعيل وتصبح المهمة غير متاحة حتى انتهائه.";
                 return;
             }
 
@@ -1258,10 +1261,12 @@
             const diff = (state.lastTaskTime + 24 * 60 * 60 * 1000) - now;
 
             if (diff <= 0) {
-                timerEl.innerText = "جاهز للتفعيل الآن";
+                timerEl.innerText = "جاهز للتفعيل الآن!";
                 statusEl.innerText = "جاهزة للتفعيل";
                 btnEl.disabled = false;
+                btnEl.innerHTML = `<i class="fa-solid fa-play ml-2"></i> تفعيل المهمة وحساب الربح اليومي`;
                 btnEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                if (textEl) textEl.innerText = "انتهى العد التنازلي! المهمة أصبحت جاهزة للتفعيل الآن.";
             } else {
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -1271,7 +1276,9 @@
                 timerEl.innerText = timeStr;
                 statusEl.innerText = `انتظار (${timeStr})`;
                 btnEl.disabled = true;
+                btnEl.innerHTML = `<i class="fa-solid fa-clock ml-2"></i> المهمة غير متاحة الآن (انتظر انتهاء العد التنازلي)`;
                 btnEl.classList.add('opacity-50', 'cursor-not-allowed');
+                if (textEl) textEl.innerText = "بدأ العد التنازلي! المهمة ليست متاحة للتفعيل الآن وتصبح جاهزة تلقائياً فور انتهاء العد التنازلي.";
             }
         }
 
