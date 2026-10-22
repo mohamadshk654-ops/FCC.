@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); // رفع الحد لاستيعاب صور الهوية
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname)));
 
@@ -39,6 +39,18 @@ const Withdraw = mongoose.model('Withdraw', withdrawSchema);
 
 const kycSchema = new mongoose.Schema({ id: Number, userEmail: String, fullName: String, country: String, docType: String, frontImg: String, backImg: String });
 const KYC = mongoose.model('KYC', kycSchema);
+
+// schema خاص بالسجل الدائم
+const logSchema = new mongoose.Schema({
+    id: Number,
+    userEmail: String,
+    type: String,
+    title: String,
+    amount: String,
+    date: String,
+    status: String
+});
+const Log = mongoose.model('Log', logSchema);
 
 app.post('/api/register', async (req, res) => {
     try {
@@ -83,6 +95,16 @@ app.get('/api/user/:email', async (req, res) => {
     }
 });
 
+// جلب السجلات الخاصة بالمستخدم من MongoDB
+app.get('/api/logs/:email', async (req, res) => {
+    try {
+        const logs = await Log.find({ userEmail: req.params.email }).sort({ id: -1 });
+        res.json({ success: true, logs });
+    } catch (err) {
+        res.status(500).json({ success: false, logs: [] });
+    }
+});
+
 app.post('/api/invest', async (req, res) => {
     try {
         const { email, planName, price, dailyProfit, duration } = req.body;
@@ -105,6 +127,18 @@ app.post('/api/invest', async (req, res) => {
         user.activeInvestments.push(investment);
         await user.save();
 
+        // إضافة سجل
+        const newLog = new Log({
+            id: Date.now(),
+            userEmail: email,
+            type: 'اشتراك باقة',
+            title: `الاشتراك بـ ${planName}`,
+            amount: `-$${parsedPrice.toFixed(2)}`,
+            date: new Date().toLocaleTimeString(),
+            status: 'مكتمل'
+        });
+        await newLog.save();
+
         res.json({ success: true, message: 'تم تفعيل الباقة بنجاح', user });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في الخادم' });
@@ -126,6 +160,18 @@ app.post('/api/task', async (req, res) => {
         user.lastTaskTime = Date.now();
         await user.save();
 
+        // إضافة سجل
+        const newLog = new Log({
+            id: Date.now(),
+            userEmail: email,
+            type: 'المهمة اليومية',
+            title: 'أرباح تفعيل المهمة اليومية',
+            amount: `+$${parsedReward.toFixed(2)}`,
+            date: new Date().toLocaleTimeString(),
+            status: 'مكتمل'
+        });
+        await newLog.save();
+
         res.json({ success: true, message: 'تم إضافة الأرباح بنجاح', user });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في الخادم' });
@@ -139,8 +185,21 @@ app.post('/api/deposit', async (req, res) => {
         const user = await User.findOne({ email });
         if (!user || isNaN(parsedAmount) || parsedAmount <= 0) return res.status(400).json({ success: false, message: 'مبلغ غير صالح' });
 
-        const depositReq = new Deposit({ id: Date.now(), userEmail: email, userName: user.name, amount: parsedAmount, method });
+        const reqId = Date.now();
+        const depositReq = new Deposit({ id: reqId, userEmail: email, userName: user.name, amount: parsedAmount, method });
         await depositReq.save();
+
+        const newLog = new Log({
+            id: reqId,
+            userEmail: email,
+            type: 'طلب إيداع',
+            title: `طلب شحن عبر ${method}`,
+            amount: `+$${parsedAmount.toFixed(2)}`,
+            date: new Date().toLocaleTimeString(),
+            status: 'قيد المراجعة'
+        });
+        await newLog.save();
+
         res.json({ success: true, message: 'تم إرسال طلب الإيداع' });
     } catch (err) {
         res.status(500).json({ success: false });
@@ -157,8 +216,21 @@ app.post('/api/withdraw', async (req, res) => {
             return res.status(400).json({ success: false, message: 'رصيد غير كافٍ أو مبلغ غير صالح' });
         }
 
-        const withdrawReq = new Withdraw({ id: Date.now(), userEmail: email, userName: user.name, amount: parsedAmount, method, address });
+        const reqId = Date.now();
+        const withdrawReq = new Withdraw({ id: reqId, userEmail: email, userName: user.name, amount: parsedAmount, method, address });
         await withdrawReq.save();
+
+        const newLog = new Log({
+            id: reqId,
+            userEmail: email,
+            type: 'طلب سحب',
+            title: `طلب سحب إلى ${method}`,
+            amount: `-$${parsedAmount.toFixed(2)}`,
+            date: new Date().toLocaleTimeString(),
+            status: 'قيد المراجعة'
+        });
+        await newLog.save();
+
         res.json({ success: true, message: 'تم إرسال طلب السحب' });
     } catch (err) {
         res.status(500).json({ success: false });
@@ -169,8 +241,21 @@ app.post('/api/kyc', async (req, res) => {
     try {
         const { email, fullName, country, docType, frontImg, backImg } = req.body;
         await User.updateOne({ email }, { kycStatus: 'pending' });
-        const kycReq = new KYC({ id: Date.now(), userEmail: email, fullName, country, docType, frontImg, backImg });
+        const reqId = Date.now();
+        const kycReq = new KYC({ id: reqId, userEmail: email, fullName, country, docType, frontImg, backImg });
         await kycReq.save();
+
+        const newLog = new Log({
+            id: reqId,
+            userEmail: email,
+            type: 'توثيق الهوية',
+            title: `تقديم مستندات KYC (${country})`,
+            amount: '-',
+            date: new Date().toLocaleTimeString(),
+            status: 'قيد المراجعة'
+        });
+        await newLog.save();
+
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false });
@@ -188,9 +273,12 @@ app.get('/api/admin/data', async (req, res) => {
     }
 });
 
+// إجراء الأدمن وتحديث حالة السجل تلقائياً
 app.post('/api/admin/action', async (req, res) => {
     try {
         const { type, id, action } = req.body;
+        const statusText = (action === 'approve') ? 'مقبول / تم التنفيذ ✅' : 'مرفوض ❌';
+
         if (type === 'deposit') {
             const reqData = await Deposit.findOne({ id });
             if (reqData && action === 'approve') {
@@ -210,18 +298,25 @@ app.post('/api/admin/action', async (req, res) => {
                     }
                 }
             }
-            await Deposit.deleteOne({ id });
+            if (reqData) {
+                await Log.updateOne({ id: reqData.id }, { status: statusText });
+                await Deposit.deleteOne({ id });
+            }
         } else if (type === 'withdraw') {
             const reqData = await Withdraw.findOne({ id });
-            if (reqData && action === 'approve') {
-                await User.updateOne({ email: reqData.userEmail }, { $inc: { balance: -reqData.amount } });
+            if (reqData) {
+                if (action === 'approve') {
+                    await User.updateOne({ email: reqData.userEmail }, { $inc: { balance: -reqData.amount } });
+                }
+                await Log.updateOne({ id: reqData.id }, { status: statusText });
+                await Withdraw.deleteOne({ id });
             }
-            await Withdraw.deleteOne({ id });
         } else if (type === 'kyc') {
             const reqData = await KYC.findOne({ id });
             if (reqData) {
                 const newStatus = (action === 'approve') ? 'verified' : 'unverified';
                 await User.updateOne({ email: reqData.userEmail }, { kycStatus: newStatus });
+                await Log.updateOne({ id: reqData.id }, { status: statusText });
                 await KYC.deleteOne({ id });
             }
         }
