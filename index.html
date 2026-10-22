@@ -55,6 +55,17 @@
         </a>
     </div>
 
+    <!-- IMAGE PREVIEW MODAL FOR ADMIN -->
+    <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
+        <div class="max-w-xl w-full glass-panel p-6 rounded-3xl relative text-center border border-amber-500/40 shadow-2xl">
+            <button onclick="closeImageModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-bold text-white mb-4">معاينة صورة الهوية</h3>
+            <img id="modalImagePreview" src="" class="max-h-[70vh] mx-auto rounded-xl object-contain border border-slate-700" alt="ID Preview">
+        </div>
+    </div>
+
     <!-- KYC POPUP MODAL -->
     <div id="kycModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="max-w-lg w-full glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
@@ -312,7 +323,7 @@
 
                     <div class="space-y-4">
                         <h3 class="text-lg font-bold text-blue-400 flex items-center gap-2">
-                            <i class="fa-solid fa-id-card"></i> طلبات توثيق الهوية المعلقة للشركة
+                            <i class="fa-solid fa-id-card"></i> طلبات توثيق الهوية المعلقة للشركة (اضغط على الصورة لمعاينتها)
                         </h3>
                         <div id="adminKYCRequests" class="space-y-3"></div>
                     </div>
@@ -660,7 +671,8 @@
             teamEarnings: 0.00
         };
 
-        let logs = [];
+        // تحميل السجل من التخزين المحلي لضمان عدم ضياعه عند التحديث
+        let logs = JSON.parse(localStorage.getItem('fcc_logs')) || [];
         let currentSelectedDepositMethod = 'trc20';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -669,6 +681,10 @@
             checkUrlRefCode();
             restoreSession();
         });
+
+        function saveLogsToStorage() {
+            localStorage.setItem('fcc_logs', JSON.stringify(logs));
+        }
 
         async function restoreSession() {
             const savedUser = localStorage.getItem('fcc_user_email');
@@ -713,6 +729,15 @@
 
         function closeKycModal() {
             document.getElementById('kycModal').classList.add('hidden');
+        }
+
+        function openImageModal(imgSrc) {
+            document.getElementById('modalImagePreview').src = imgSrc;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
         }
 
         function switchAuthMode(mode) {
@@ -951,6 +976,7 @@
                         date: new Date().toLocaleTimeString(),
                         status: 'قيد المراجعة لدى الشركة'
                     });
+                    saveLogsToStorage();
                     document.getElementById('depositAmount').value = '';
                     alert('تم إرسال طلب الشحن بنجاح للشركة للموافقة والإضافة.');
                     switchTab('dashboard');
@@ -987,6 +1013,7 @@
                         date: new Date().toLocaleTimeString(),
                         status: 'قيد المراجعة لدى الشركة'
                     });
+                    saveLogsToStorage();
                     document.getElementById('withdrawAmount').value = '';
                     document.getElementById('withdrawAddress').value = '';
                     alert('تم إرسال طلب السحب للشركة للمعالجة وقبوله.');
@@ -1036,6 +1063,7 @@
                                 date: new Date().toLocaleTimeString(),
                                 status: 'قيد المراجعة لدى الشركة'
                             });
+                            saveLogsToStorage();
                             closeKycModal();
                             updateUI();
                             alert('تم إرسال مستندات التوثيق بنجاح للشركة للتدقيق.');
@@ -1110,14 +1138,14 @@
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 pt-2">
-                            <a href="${k.frontImg}" target="_blank" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500">
+                            <div onclick="openImageModal('${k.frontImg}')" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500 cursor-pointer transition-all">
                                 <img src="${k.frontImg}" class="max-h-28 mx-auto rounded-lg object-cover mb-1" alt="Front ID">
-                                <span class="text-[10px] text-amber-400 font-bold">الوجه الأمامي</span>
-                            </a>
-                            <a href="${k.backImg}" target="_blank" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500">
+                                <span class="text-[10px] text-amber-400 font-bold"><i class="fa-solid fa-magnifying-glass ml-1"></i> اضغط لمعاينة الوجه الأمامي</span>
+                            </div>
+                            <div onclick="openImageModal('${k.backImg}')" class="block text-center p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500 cursor-pointer transition-all">
                                 <img src="${k.backImg}" class="max-h-28 mx-auto rounded-lg object-cover mb-1" alt="Back ID">
-                                <span class="text-[10px] text-amber-400 font-bold">الوجه الخلفي</span>
-                            </a>
+                                <span class="text-[10px] text-amber-400 font-bold"><i class="fa-solid fa-magnifying-glass ml-1"></i> اضغط لمعاينة الوجه الخلفي</span>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -1176,6 +1204,7 @@
                         date: new Date().toLocaleTimeString(),
                         status: 'مكتمل ومحفوظ في القاعدة'
                     });
+                    saveLogsToStorage();
 
                     updateUI();
                     alert(`تم الاشتراك بنجاح في ${pkg.name} وحفظها في قاعدة البيانات لمدة 120 يوماً.`);
@@ -1229,6 +1258,7 @@
                         date: new Date().toLocaleTimeString(),
                         status: 'مكتمل ومحفوظ في القاعدة'
                     });
+                    saveLogsToStorage();
 
                     updateUI();
                     alert(`تم تفعيل المهمة بنجاح وتحصيل الأرباح بقيمة ($${profit.toFixed(2)}). بدأ العد التنازلي الآن للمهمة القادمة.`);
