@@ -5,17 +5,16 @@ const path = require('path');
 const app = express();
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' })); // رفع الحد لاستيعاب صور الهوية
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// رابط قاعدة البيانات الدائمة الخاص بك
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://mohamadshk654_db_user:qNpyJyoVW7R2dtNU@cluster0.ositygo.mongodb.net/fcc_db";
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ Connected to MongoDB Atlas successfully!"))
     .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// نماذج قاعدة البيانات الدائمة
 const userSchema = new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },
@@ -41,8 +40,6 @@ const Withdraw = mongoose.model('Withdraw', withdrawSchema);
 const kycSchema = new mongoose.Schema({ id: Number, userEmail: String, fullName: String, country: String, docType: String, frontImg: String, backImg: String });
 const KYC = mongoose.model('KYC', kycSchema);
 
-
-// API المسارات
 app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password, refCode } = req.body;
@@ -86,7 +83,6 @@ app.get('/api/user/:email', async (req, res) => {
     }
 });
 
-// مسار شراء الباقة / الاستثمار وحفظها في قاعدة البيانات
 app.post('/api/invest', async (req, res) => {
     try {
         const { email, planName, price, dailyProfit, duration } = req.body;
@@ -115,7 +111,6 @@ app.post('/api/invest', async (req, res) => {
     }
 });
 
-// مسار إنجاز المهام وتحديث الأرباح والرصيد في قاعدة البيانات
 app.post('/api/task', async (req, res) => {
     try {
         const { email, reward } = req.body;
@@ -204,7 +199,6 @@ app.post('/api/admin/action', async (req, res) => {
                     targetUser.balance += reqData.amount;
                     await targetUser.save();
 
-                    // إضافة عمولة الفريق 3% للداعي عند إيداع الصديق
                     if (targetUser.referredBy) {
                         const referrer = await User.findOne({ refCode: targetUser.referredBy });
                         if (referrer) {
