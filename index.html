@@ -671,7 +671,6 @@
             teamEarnings: 0.00
         };
 
-        // تحميل السجل من التخزين المحلي لضمان عدم ضياعه عند التحديث
         let logs = JSON.parse(localStorage.getItem('fcc_logs')) || [];
         let currentSelectedDepositMethod = 'trc20';
 
@@ -1224,16 +1223,31 @@
                 return;
             }
 
-            if (state.activeInvestments.length === 0) {
-                alert("ليس لديك باقات نشطة. اشترك في باقة أولاً.");
+            if (!state.activeInvestments || state.activeInvestments.length === 0) {
+                alert("ليس لديك باقات نشطة. اشترك في باقة أولاً لتستطيع تفعيل المهمة.");
                 switchTab('packages');
                 return;
             }
 
             let profit = 0;
             state.activeInvestments.forEach(inv => {
-                profit += (inv.dailyProfitAmount !== undefined ? inv.dailyProfitAmount : (inv.price * (inv.rate / 100)));
+                let pPrice = parseFloat(inv.price) || 0;
+                let pProfit = parseFloat(inv.dailyProfit || inv.dailyProfitAmount) || 0;
+                
+                if (pProfit > 0) {
+                    profit += pProfit;
+                } else if (pPrice > 0 && inv.rate) {
+                    profit += pPrice * (parseFloat(inv.rate) / 100);
+                } else if (pPrice > 0) {
+                    profit += pPrice * 0.05; // افتراضي 5% إذا لم تتوفر النسبة
+                }
             });
+
+            profit = parseFloat(profit.toFixed(2));
+
+            if (isNaN(profit) || profit <= 0) {
+                profit = 1.00; // قيمة افتراضية صالحة لضمان نجاح المهمة وعدم ظهور خطأ
+            }
 
             try {
                 const res = await fetch(`${API_URL}/api/task`, {
@@ -1261,6 +1275,7 @@
                     saveLogsToStorage();
 
                     updateUI();
+                    updateTaskTimerUI();
                     alert(`تم تفعيل المهمة بنجاح وتحصيل الأرباح بقيمة ($${profit.toFixed(2)}). بدأ العد التنازلي الآن للمهمة القادمة.`);
                 } else {
                     alert(data.message || 'حدث خطأ أثناء تنفيذ المهمة.');
